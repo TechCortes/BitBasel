@@ -6,35 +6,35 @@ import { useWalletStore } from '@/store/StoreProvider';
 import { WalletProvider } from '@/types/wallet';
 
 const WALLET_PROVIDERS = [
-  { 
-    id: 'unisat', 
-    name: 'Unisat', 
-    icon: '🔶', 
-    installed: () => !!(window as any).unisat 
+  {
+    id: 'unisat',
+    name: 'Unisat',
+    icon: '🔶',
+    installed: () => !!(window as any).unisat,
   },
-  { 
-    id: 'xverse', 
-    name: 'Xverse', 
-    icon: '⚡', 
-    installed: () => !!(window as any).BitcoinProvider && !!(window as any).StacksProvider 
+  {
+    id: 'xverse',
+    name: 'Xverse',
+    icon: '⚡',
+    installed: () => !!(window as any).BitcoinProvider && !!(window as any).StacksProvider,
   },
-  { 
-    id: 'ordinals-wallet', 
-    name: 'Ordinals', 
-    icon: '🎨', 
-    installed: () => !!(window as any).ordinalsWallet 
+  {
+    id: 'ordinals-wallet',
+    name: 'Ordinals',
+    icon: '🎨',
+    installed: () => !!(window as any).ordinalsWallet,
   },
-  { 
-    id: 'leather', 
-    name: 'Leather', 
-    icon: '🐂', 
-    installed: () => !!(window as any).LeatherProvider 
+  {
+    id: 'leather',
+    name: 'Leather',
+    icon: '🐂',
+    installed: () => !!(window as any).LeatherProvider,
   },
-  { 
-    id: 'phantom', 
-    name: 'Phantom', 
-    icon: '👻', 
-    installed: () => !!(window as any).phantom?.bitcoin 
+  {
+    id: 'phantom',
+    name: 'Phantom',
+    icon: '👻',
+    installed: () => !!(window as any).phantom?.bitcoin,
   },
 ] as const;
 
@@ -49,30 +49,33 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
   const [securityChecked, setSecurityChecked] = useState(false);
   const [connectionAttempts, setConnectionAttempts] = useState<Record<string, number>>({});
 
-  const validateConnection = useCallback((provider: WalletProvider): boolean => {
-    if (typeof window === 'undefined') return false;
-    
-    const attempts = connectionAttempts[provider] || 0;
-    if (attempts >= 3) {
-      walletStore.error = `Too many connection attempts for ${provider}. Please refresh and try again.`;
-      return false;
-    }
-    
-    return true;
-  }, [connectionAttempts, walletStore]);
+  const validateConnection = useCallback(
+    (provider: WalletProvider): boolean => {
+      if (typeof window === 'undefined') return false;
+
+      const attempts = connectionAttempts[provider] || 0;
+      if (attempts >= 3) {
+        walletStore.error = `Too many connection attempts for ${provider}. Please refresh and try again.`;
+        return false;
+      }
+
+      return true;
+    },
+    [connectionAttempts, walletStore]
+  );
 
   const handleConnect = async (provider: WalletProvider) => {
     if (!validateConnection(provider)) return;
-    
+
     setConnecting(provider);
-    setConnectionAttempts(prev => ({
+    setConnectionAttempts((prev) => ({
       ...prev,
-      [provider]: (prev[provider] || 0) + 1
+      [provider]: (prev[provider] || 0) + 1,
     }));
 
     try {
       await walletStore.connectWallet(provider);
-      setConnectionAttempts(prev => ({ ...prev, [provider]: 0 }));
+      setConnectionAttempts((prev) => ({ ...prev, [provider]: 0 }));
       onClose?.();
     } catch (error) {
       console.error('Failed to connect:', error);
@@ -92,7 +95,7 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
   };
 
   if (walletStore.isConnected && !showModal) {
-    const provider = WALLET_PROVIDERS.find(p => p.id === walletStore.walletInfo?.provider);
+    const provider = WALLET_PROVIDERS.find((p) => p.id === walletStore.walletInfo?.provider);
     return (
       <div className="wallet-connected">
         <div className="wallet-info">
@@ -116,13 +119,17 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
       <div className="wallet-modal" onClick={(e) => e.stopPropagation()}>
         <div className="wallet-modal-header">
           <h2 className="text-heading-2">Connect Wallet</h2>
-          <button className="close-btn" onClick={onClose}>×</button>
+          <button className="close-btn" onClick={onClose}>
+            ×
+          </button>
         </div>
 
         {walletStore.error && (
           <div className="error-message">
             {walletStore.error}
-            <button className="clear-error-btn" onClick={() => walletStore.clearError()}>×</button>
+            <button className="clear-error-btn" onClick={() => walletStore.clearError()}>
+              ×
+            </button>
           </div>
         )}
 
@@ -144,12 +151,11 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
                 <div className="provider-info">
                   <div className="provider-name">{provider.name}</div>
                   <div className="provider-description">
-                    {isBlocked 
+                    {isBlocked
                       ? 'Connection blocked - refresh to retry'
-                      : !isInstalled 
-                        ? 'Not installed' 
-                        : `${provider.name} wallet ${attempts > 0 ? `(${attempts}/3 attempts)` : ''}`
-                    }
+                      : !isInstalled
+                        ? 'Not installed'
+                        : `${provider.name} wallet ${attempts > 0 ? `(${attempts}/3 attempts)` : ''}`}
                   </div>
                 </div>
                 {isConnecting && <div className="connecting-spinner">⟳</div>}
@@ -159,9 +165,7 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
         </div>
 
         <div className="wallet-modal-footer">
-          <p className="text-small">
-            By connecting, you agree to BitBasel's Terms of Service
-          </p>
+          <p className="text-small">By connecting, you agree to Cafe's Terms of Service</p>
         </div>
       </div>
     </div>
