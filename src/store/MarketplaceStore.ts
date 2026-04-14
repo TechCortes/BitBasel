@@ -1,6 +1,12 @@
 import { makeAutoObservable, runInAction } from 'mobx';
 import { Ordinal, Collection, Gallery, MarketplaceStats, PriceData } from '@/types/ordinals';
-import { mockOrdinals, mockCollections, mockGalleries, mockStats, mockPriceData } from '@/data/mockData';
+import {
+  mockOrdinals,
+  mockCollections,
+  mockGalleries,
+  mockStats,
+  mockPriceData,
+} from '@/data/mockData';
 
 export class MarketplaceStore {
   // State
@@ -38,8 +44,8 @@ export class MarketplaceStore {
 
     try {
       // Simulate API delay for realistic loading
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
       runInAction(() => {
         this.ordinals = mockOrdinals;
         this.loading = false;
@@ -57,8 +63,8 @@ export class MarketplaceStore {
 
     try {
       // Simulate API delay for realistic loading
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
       runInAction(() => {
         this.collections = mockCollections;
         this.featuredCollections = mockCollections.filter((c: Collection) => c.verified);
@@ -74,8 +80,8 @@ export class MarketplaceStore {
 
   async fetchGalleries() {
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       runInAction(() => {
         this.galleries = mockGalleries;
       });
@@ -88,8 +94,8 @@ export class MarketplaceStore {
 
   async fetchStats() {
     try {
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
       runInAction(() => {
         this.stats = mockStats;
       });
@@ -100,8 +106,8 @@ export class MarketplaceStore {
 
   async fetchPriceData() {
     try {
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
       runInAction(() => {
         this.priceData = mockPriceData;
       });

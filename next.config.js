@@ -45,7 +45,8 @@ const nextConfig = {
           },
           {
             key: 'Permissions-Policy',
-            value: 'geolocation=(), microphone=(), camera=(), payment=(), usb=(), screen-wake-lock=()',
+            value:
+              'geolocation=(), microphone=(), camera=(), payment=(), usb=(), screen-wake-lock=()',
           },
           {
             key: 'Content-Security-Policy',

@@ -26,38 +26,51 @@ export class WalletStore {
   // Production security monitoring
   private setupSecurityMonitoring() {
     if (typeof window === 'undefined') return;
-    
+
     // Monitor wallet extension changes
     let walletCheckInterval: NodeJS.Timeout;
-    
+
     const checkWalletSecurity = () => {
       if (this.walletInfo && this.isConnected) {
-        this.validateWalletState().then(isValid => {
-          if (!isValid) {
-            console.warn('Security: Wallet state validation failed');
-          }
-        }).catch(error => {
-          console.error('Security monitoring error:', error);
-        });
+        this.validateWalletState()
+          .then((isValid) => {
+            if (!isValid) {
+              console.warn('Security: Wallet state validation failed');
+            }
+          })
+          .catch((error) => {
+            console.error('Security monitoring error:', error);
+          });
       }
     };
-    
+
     // Check wallet state every 30 seconds
     walletCheckInterval = setInterval(checkWalletSecurity, 30000);
-    
+
     // Clear interval on page unload
     window.addEventListener('beforeunload', () => {
       if (walletCheckInterval) {
         clearInterval(walletCheckInterval);
       }
     });
-    
+
     // Listen for account changes in supported wallets
     if ((window as any).unisat) {
       (window as any).unisat.on('accountsChanged', (accounts: string[]) => {
         if (this.walletInfo && this.walletInfo.provider === 'unisat') {
           if (accounts.length === 0 || accounts[0] !== this.walletInfo.address) {
             console.warn('Security: Account changed detected');
+            this.disconnectWallet();
+          }
+        }
+      });
+    }
+
+    if ((window as any).phantom?.bitcoin) {
+      (window as any).phantom.bitcoin.on('accountsChanged', (accounts: { address: string }[]) => {
+        if (this.walletInfo && this.walletInfo.provider === 'phantom') {
+          if (accounts.length === 0 || accounts[0]?.address !== this.walletInfo.address) {
+            console.warn('Security: Phantom account changed detected');
             this.disconnectWallet();
           }
         }
@@ -70,7 +83,7 @@ export class WalletStore {
     try {
       // Only run in browser environment
       if (typeof window === 'undefined') return;
-      
+
       const savedWallet = localStorage.getItem('bitbasel_wallet');
       if (savedWallet) {
         // Validate stored data structure
@@ -79,19 +92,19 @@ export class WalletStore {
           localStorage.removeItem('bitbasel_wallet');
           return;
         }
-        
+
         const { provider, address, timestamp } = parsed;
-        
+
         // Check if connection is expired (24 hours)
         const now = Date.now();
         const connectionAge = now - (timestamp || 0);
         const MAX_CONNECTION_AGE = 24 * 60 * 60 * 1000; // 24 hours
-        
+
         if (connectionAge > MAX_CONNECTION_AGE) {
           localStorage.removeItem('bitbasel_wallet');
           return;
         }
-        
+
         await this.connectWallet(provider, false);
       }
     } catch (error) {
@@ -104,7 +117,7 @@ export class WalletStore {
   // Validate stored wallet data structure - SECURITY
   private isValidStoredWallet(data: any): boolean {
     return (
-      data && 
+      data &&
       typeof data === 'object' &&
       typeof data.provider === 'string' &&
       this.availableProviders.includes(data.provider as WalletProvider) &&
@@ -179,9 +192,9 @@ export class WalletStore {
           provider,
           address: walletInfo.address,
           timestamp: Date.now(),
-          version: '1.0' // For future compatibility
+          version: '1.0', // For future compatibility
         };
-        
+
         localStorage.setItem('bitbasel_wallet', JSON.stringify(secureWalletData));
       }
 
@@ -198,9 +211,15 @@ export class WalletStore {
   // Disconnect wallet
   async disconnectWallet() {
     try {
-      if (this.walletInfo?.provider === 'unisat' && (window as any).unisat) {
+      const provider = this.walletInfo?.provider;
+
+      if (provider === 'unisat' && (window as any).unisat) {
         await (window as any).unisat.disconnect();
+      } else if (provider === 'phantom' && (window as any).phantom?.bitcoin) {
+        await (window as any).phantom.bitcoin.disconnect();
       }
+      // Xverse, Leather, and Ordinals Wallet do not expose a disconnect method;
+      // clearing local state is sufficient.
 
       runInAction(() => {
         this.walletInfo = null;
@@ -242,11 +261,11 @@ export class WalletStore {
 
     const xverse = (window as any).BitcoinProvider;
     const response = await xverse.connect();
-    
+
     if (response.status === 'success') {
       const addressResponse = await xverse.getAddresses();
       const address = addressResponse.result.addresses[0];
-      
+
       return {
         address: address.address,
         publicKey: address.publicKey || '',
@@ -256,7 +275,7 @@ export class WalletStore {
         provider: 'xverse',
       };
     }
-    
+
     throw new Error('Failed to connect to Xverse wallet');
   }
 
@@ -287,10 +306,10 @@ export class WalletStore {
 
     const leather = (window as any).LeatherProvider;
     const response = await leather.request('getAddresses');
-    
+
     if (response.result && response.result.addresses.length > 0) {
       const address = response.result.addresses[0];
-      
+
       return {
         address: address.address,
         publicKey: address.publicKey || '',
@@ -300,7 +319,7 @@ export class WalletStore {
         provider: 'leather',
       };
     }
-    
+
     throw new Error('Failed to connect to Leather wallet');
   }
 
@@ -311,7 +330,7 @@ export class WalletStore {
 
     const phantom = (window as any).phantom.bitcoin;
     const response = await phantom.connect();
-    
+
     if (response.address) {
       return {
         address: response.address,
@@ -322,63 +341,125 @@ export class WalletStore {
         provider: 'phantom',
       };
     }
-    
+
     throw new Error('Failed to connect to Phantom wallet');
   }
 
   // Transaction methods
   async signMessage(message: string): Promise<string> {
-    if (!this.walletInfo) {
-      throw new Error('No wallet connected');
-    }
+    if (!this.walletInfo) throw new Error('No wallet connected');
 
     switch (this.walletInfo.provider) {
       case 'unisat':
-        if (!(window as any).unisat) {
-          throw new Error('Unisat wallet not available');
-        }
+        if (!(window as any).unisat) throw new Error('Unisat wallet not available');
         return await (window as any).unisat.signMessage(message);
+
+      case 'ordinals-wallet':
+        if (!(window as any).ordinalsWallet) throw new Error('Ordinals Wallet not available');
+        return await (window as any).ordinalsWallet.signMessage(message);
+
+      case 'xverse': {
+        if (!(window as any).BitcoinProvider) throw new Error('Xverse not available');
+        const res = await (window as any).BitcoinProvider.signMessage({
+          address: this.walletInfo.address,
+          message,
+        });
+        return res.result?.signature ?? res.signature;
+      }
+
+      case 'leather': {
+        if (!(window as any).LeatherProvider) throw new Error('Leather not available');
+        const res = await (window as any).LeatherProvider.request('signMessage', {
+          message,
+          paymentType: 'p2wpkh',
+        });
+        return res.result.signature;
+      }
+
+      case 'phantom': {
+        if (!(window as any).phantom?.bitcoin) throw new Error('Phantom Bitcoin not available');
+        const encoded = new TextEncoder().encode(message);
+        const { signature } = await (window as any).phantom.bitcoin.signMessage(
+          this.walletInfo.address,
+          encoded
+        );
+        return Buffer.from(signature).toString('hex');
+      }
+
       default:
         throw new Error(`Signing not supported for ${this.walletInfo.provider}`);
     }
   }
 
+  private trackTransaction(txid: string) {
+    runInAction(() => {
+      this.transactions.push({
+        txid,
+        status: 'pending',
+        confirmations: 0,
+        timestamp: new Date().toISOString(),
+      });
+    });
+  }
+
   async sendBitcoin(toAddress: string, amount: number): Promise<string> {
-    if (!this.walletInfo) {
-      throw new Error('No wallet connected');
-    }
+    if (!this.walletInfo) throw new Error('No wallet connected');
+
+    let txid: string;
 
     switch (this.walletInfo.provider) {
       case 'unisat':
-        if (!(window as any).unisat) {
-          throw new Error('Unisat wallet not available');
-        }
-        const txid = await (window as any).unisat.sendBitcoin(toAddress, amount);
+        if (!(window as any).unisat) throw new Error('Unisat wallet not available');
+        txid = await (window as any).unisat.sendBitcoin(toAddress, amount);
+        break;
 
-        // Track transaction
-        runInAction(() => {
-          this.transactions.push({
-            txid,
-            status: 'pending',
-            confirmations: 0,
-            timestamp: new Date().toISOString(),
-          });
+      case 'ordinals-wallet':
+        if (!(window as any).ordinalsWallet) throw new Error('Ordinals Wallet not available');
+        txid = await (window as any).ordinalsWallet.sendBitcoin(toAddress, amount);
+        break;
+
+      case 'xverse': {
+        if (!(window as any).BitcoinProvider) throw new Error('Xverse not available');
+        const res = await (window as any).BitcoinProvider.sendBtcTransaction({
+          recipients: [{ address: toAddress, amountSats: amount }],
+          senderAddress: this.walletInfo.address,
         });
+        txid = res.result?.txid ?? res.txid;
+        break;
+      }
 
-        return txid;
+      case 'leather': {
+        if (!(window as any).LeatherProvider) throw new Error('Leather not available');
+        const res = await (window as any).LeatherProvider.request('sendTransfer', {
+          recipients: [{ address: toAddress, amount: String(amount) }],
+        });
+        txid = res.result.txid;
+        break;
+      }
+
+      case 'phantom': {
+        if (!(window as any).phantom?.bitcoin) throw new Error('Phantom Bitcoin not available');
+        const res = await (window as any).phantom.bitcoin.sendBitcoin(toAddress, amount);
+        txid = res.txid ?? res;
+        break;
+      }
+
       default:
-        throw new Error(`Transaction not supported for ${this.walletInfo.provider}`);
+        throw new Error(`Transactions not supported for ${this.walletInfo.provider}`);
     }
+
+    this.trackTransaction(txid);
+    return txid;
   }
 
   // Advanced wallet state validation with retry mechanism
   private async validateWalletState(): Promise<boolean> {
     if (!this.walletInfo) return false;
-    
+
     try {
       const { provider } = this.walletInfo;
       let isValid = false;
-      
+
       switch (provider) {
         case 'unisat':
           if ((window as any).unisat) {
@@ -392,15 +473,33 @@ export class WalletStore {
             isValid = response.result?.addresses?.[0]?.address === this.walletInfo.address;
           }
           break;
+        case 'ordinals-wallet':
+          if ((window as any).ordinalsWallet) {
+            const accounts = await (window as any).ordinalsWallet.getAccounts();
+            isValid = accounts.length > 0 && accounts[0] === this.walletInfo.address;
+          }
+          break;
+        case 'leather':
+          if ((window as any).LeatherProvider) {
+            const response = await (window as any).LeatherProvider.request('getAddresses');
+            isValid = response.result?.addresses?.[0]?.address === this.walletInfo.address;
+          }
+          break;
+        case 'phantom':
+          if ((window as any).phantom?.bitcoin) {
+            const accounts = await (window as any).phantom.bitcoin.getAccounts();
+            isValid = accounts.length > 0 && accounts[0]?.address === this.walletInfo.address;
+          }
+          break;
         default:
-          isValid = true; // Assume valid for other providers
+          isValid = true;
       }
-      
+
       if (!isValid) {
         console.warn('Wallet state validation failed, disconnecting...');
         await this.disconnectWallet();
       }
-      
+
       return isValid;
     } catch (error) {
       console.error('Wallet state validation error:', error);
@@ -411,17 +510,17 @@ export class WalletStore {
   // Update wallet balance with enhanced error handling
   async updateBalance() {
     if (!this.walletInfo) return;
-    
+
     const isValidState = await this.validateWalletState();
     if (!isValidState) return;
 
     const MAX_RETRIES = 3;
     let attempt = 0;
-    
+
     while (attempt < MAX_RETRIES) {
       try {
         let newBalance = 0;
-        
+
         switch (this.walletInfo.provider) {
           case 'unisat':
             if ((window as any).unisat) {
@@ -455,14 +554,14 @@ export class WalletStore {
             this.walletInfo.balance = newBalance;
           }
         });
-        
+
         return; // Success, exit retry loop
       } catch (error) {
         attempt++;
         console.error(`Balance update attempt ${attempt} failed:`, error);
-        
+
         if (attempt < MAX_RETRIES) {
-          await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+          await new Promise((resolve) => setTimeout(resolve, 1000 * attempt));
         } else {
           console.error('Failed to update balance after', MAX_RETRIES, 'attempts');
         }
@@ -473,11 +572,11 @@ export class WalletStore {
   // Connection recovery mechanism
   async recoverConnection(): Promise<boolean> {
     if (!this.walletInfo) return false;
-    
+
     try {
       const { provider } = this.walletInfo;
       const isValid = await this.validateWalletState();
-      
+
       if (!isValid) {
         // Attempt to reconnect with same provider
         try {
@@ -489,7 +588,7 @@ export class WalletStore {
           return false;
         }
       }
-      
+
       return true;
     } catch (error) {
       console.error('Connection recovery error:', error);
@@ -500,7 +599,7 @@ export class WalletStore {
   // Enhanced error handling with auto-recovery
   async handleConnectionError(error: any, provider: WalletProvider): Promise<void> {
     let errorMessage = 'Connection failed';
-    
+
     if (error?.message?.includes('User rejected')) {
       errorMessage = 'Connection was cancelled by user';
     } else if (error?.message?.includes('not found')) {
@@ -510,12 +609,12 @@ export class WalletStore {
     } else if (error instanceof Error) {
       errorMessage = error.message;
     }
-    
+
     runInAction(() => {
       this.error = errorMessage;
       this.connecting = false;
     });
-    
+
     // Auto-clear error after 5 seconds
     setTimeout(() => {
       if (this.error === errorMessage) {

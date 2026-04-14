@@ -12,6 +12,7 @@ A cutting-edge crypto art community platform built with Next.js 14, featuring Bi
 ## 🛡️ **Security Features**
 
 ### **Core Security Measures**
+
 - **Client-Side Only Wallet Interactions** - No private keys ever transmitted or stored
 - **Multi-Signature Transaction Support** - Enhanced security for high-value trades
 - **Content Security Policy (CSP)** - Protection against XSS attacks
@@ -20,6 +21,7 @@ A cutting-edge crypto art community platform built with Next.js 14, featuring Bi
 - **Rate Limiting** - Protection against DDoS and brute force attacks
 
 ### **Wallet Security**
+
 - **Hardware Wallet Support** - Ledger, Trezor integration
 - **Message Signing Verification** - Cryptographic proof of ownership
 - **Secure Session Management** - JWT tokens with proper expiration
@@ -38,6 +40,7 @@ BitBasel features a **sophisticated pink-accented gallery aesthetic** designed f
 ## 🚀 Features
 
 ### Core Community Features
+
 - **Bitcoin Ordinals Integration** - Seamlessly browse and discover inscriptions
 - **Smart Contract Exhibitions** - Dynamic collections powered by blockchain logic
 - **Community Curation** - Local crypto art community engagement
@@ -45,12 +48,14 @@ BitBasel features a **sophisticated pink-accented gallery aesthetic** designed f
 - **Gallery Experience** - Fine art presentation with responsive layouts
 
 ### Wallet Integration
+
 - **Multi-Wallet Support** - Unisat, Xverse, Ordinals Wallet, Leather, Phantom
 - **Connection Management** - Persistent wallet sessions
 - **Transaction Ready** - Built for Bitcoin transactions (frontend)
 - **Security First** - Client-side only, no private key storage
 
 ### Technical Excellence
+
 - **Next.js 14 App Router** - Latest React patterns and SSR
 - **TypeScript Strict Mode** - Full type safety throughout
 - **MobX State Management** - Reactive, efficient state updates
@@ -59,20 +64,21 @@ BitBasel features a **sophisticated pink-accented gallery aesthetic** designed f
 
 ## 🛠️ Technology Stack
 
-| Category | Technology |
-|----------|------------|
-| **Framework** | Next.js 14.2.32 with App Router |
-| **Language** | TypeScript with strict type checking |
-| **State Management** | MobX 6 for reactive state |
-| **Styling** | Custom CSS with design system |
-| **HTTP Client** | Axios for API communication |
-| **Code Quality** | ESLint + Prettier + Husky |
+| Category               | Technology                            |
+| ---------------------- | ------------------------------------- |
+| **Framework**          | Next.js 14.2.32 with App Router       |
+| **Language**           | TypeScript with strict type checking  |
+| **State Management**   | MobX 6 for reactive state             |
+| **Styling**            | Custom CSS with design system         |
+| **HTTP Client**        | Axios for API communication           |
+| **Code Quality**       | ESLint + Prettier + Husky             |
 | **Wallet Integration** | Multi-provider Bitcoin wallet support |
 
 ## 🏃‍♂️ Quick Start
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - npm or yarn
 
 ### Installation
@@ -131,15 +137,19 @@ src/
 ### 📦 Core Components (All <150 lines)
 
 #### `MarketplaceGrid.tsx` (204→<150 lines - needs optimization)
+
 **Purpose**: Displays Bitcoin Ordinals and Collections in gallery-style layouts
+
 ```typescript
 // Usage: <MarketplaceGrid type="collections" featured={true} />
 // Features: Loading states, search, sort, responsive design
 // TODO: Simplify for <150 line requirement
 ```
 
-#### `WalletConnect.tsx` (158→<150 lines - needs optimization) 
+#### `WalletConnect.tsx` (158→<150 lines - needs optimization)
+
 **Purpose**: Multi-provider Bitcoin wallet integration
+
 ```typescript
 // Supported: Unisat, Xverse, Ordinals Wallet, Leather, Phantom
 // Security: Client-side only, no private key storage
@@ -147,7 +157,9 @@ src/
 ```
 
 #### `Navigation.tsx` (102 lines ✅)
+
 **Purpose**: Gallery-style navigation with community focus
+
 ```typescript
 // Features: Exhibitions, Artists, Gallery navigation
 // Responsive: Mobile hamburger menu included
@@ -155,7 +167,9 @@ src/
 ```
 
 #### `OrdinalCard.tsx` (112 lines ✅)
+
 **Purpose**: Individual Bitcoin Ordinal display component
+
 ```typescript
 // Features: Image/content display, metadata, pricing
 // Hover: Pink glow effects, smooth transitions
@@ -163,7 +177,9 @@ src/
 ```
 
 #### `CollectionCard.tsx` (82 lines ✅)
+
 **Purpose**: Collection/Exhibition preview cards
+
 ```typescript
 // Features: Collection stats, verification badges
 // Design: Gallery-style with pink accents
@@ -173,7 +189,9 @@ src/
 ### 🏪 State Management (MobX)
 
 #### `MarketplaceStore.ts`
+
 **Purpose**: Handles ordinals, collections, and gallery data
+
 ```typescript
 // Actions: fetchOrdinals(), fetchCollections(), fetchStats()
 // Computed: filteredOrdinals, listedOrdinals, totalValue
@@ -181,7 +199,9 @@ src/
 ```
 
 #### `WalletStore.ts`
+
 **Purpose**: Bitcoin wallet connection and transaction state
+
 ```typescript
 // Providers: Multi-wallet support with provider detection
 // Security: Connection monitoring, session management
@@ -191,28 +211,21 @@ src/
 ## 🎨 Design System
 
 ### Color Palette (Pink Gallery Theme)
+
 ```css
 /* Primary Gallery Colors */
---color-primary: #ff1493             /* BitBasel Pink */
---color-secondary: #ff69b4           /* Lighter Pink */
---color-accent: #ff1493              /* Pink Accent */
-
-/* Background & Surfaces */
---color-background: #000000          /* Pure Black */
---color-surface: #0a0a0a            /* Dark Surface */
---color-border: #2a2a2a             /* Subtle Border */
-
-/* Gallery Specific */
---color-bitbasel-pink: #ff1493       /* Main Brand */
---color-bitbasel-pink-soft: #ff69b4  /* Soft Pink */
---color-bitbasel-pink-light: rgba(255, 20, 147, 0.1) /* Pink Glow */
---color-gallery-gold: #d4af37        /* Accent Gold */
-
-/* Gradients */
---gradient-accent: linear-gradient(135deg, #ff1493 0%, #ff69b4 50%, #ff0080 100%)
+--color-primary: #ff1493 /* BitBasel Pink */ --color-secondary: #ff69b4 /* Lighter Pink */
+  --color-accent: #ff1493 /* Pink Accent */ /* Background & Surfaces */ --color-background: #000000
+  /* Pure Black */ --color-surface: #0a0a0a /* Dark Surface */ --color-border: #2a2a2a
+  /* Subtle Border */ /* Gallery Specific */ --color-bitbasel-pink: #ff1493 /* Main Brand */
+  --color-bitbasel-pink-soft: #ff69b4 /* Soft Pink */
+  --color-bitbasel-pink-light: rgba(255, 20, 147, 0.1) /* Pink Glow */ --color-gallery-gold: #d4af37
+  /* Accent Gold */ /* Gradients */
+  --gradient-accent: linear-gradient(135deg, #ff1493 0%, #ff69b4 50%, #ff0080 100%);
 ```
 
 ### Typography
+
 - **Primary**: Machina (custom web font)
 - **Fallback**: System fonts (-apple-system, BlinkMacSystemFont)
 - **Hierarchy**: Responsive type scale with proper line heights
@@ -228,7 +241,7 @@ Create `.env.development` and `.env.production` files:
 API_URL=https://api.bitbasel.miami
 BASE_URL=https://app.bitbasel.miami
 
-# Wallet Configuration  
+# Wallet Configuration
 WALLET_CONNECT_PROJECT_ID=your_project_id
 
 # Bitcoin Network
@@ -261,8 +274,9 @@ vercel
 ```
 
 The application is optimized for deployment on:
+
 - **Vercel** (recommended)
-- **Netlify**  
+- **Netlify**
 - **AWS Amplify**
 - Any static hosting service
 
@@ -276,10 +290,10 @@ The application is optimized for deployment on:
 ## 🚧 Development Priorities
 
 ### Immediate Tasks
-1. **Optimize Large Components** 
+
+1. **Optimize Large Components**
    - `MarketplaceGrid.tsx`: 204 lines → <150 lines
    - `WalletConnect.tsx`: 158 lines → <150 lines
-   
 2. **Missing Assets**
    - Add Machina font files (`/public/fonts/`)
    - Create favicon and manifest.json
@@ -291,6 +305,7 @@ The application is optimized for deployment on:
    - Connect smart contract exhibition logic
 
 ### Component Optimization Guide
+
 ```typescript
 // Follow these patterns for <150 line components:
 // ✅ Single responsibility principle
@@ -303,18 +318,20 @@ The application is optimized for deployment on:
 ## 🤝 Contributing
 
 ### Development Standards
+
 - **Component Limit**: Maximum 150 lines per component
 - **TypeScript Strict**: All code must pass strict type checking
 - **Pink Theme**: Maintain #ff1493 color scheme throughout
 - **Gallery UX**: Focus on fine art presentation and community features
 
 ### Contributing Steps
+
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/community-feature`)
 3. Follow component size limits (<150 lines)
 4. Test with `npm run dev` and `npm run type-check`
 5. Commit your changes (`git commit -m 'Add community feature'`)
-6. Push to the branch (`git push origin feature/community-feature`)  
+6. Push to the branch (`git push origin feature/community-feature`)
 7. Open a Pull Request
 
 ## 📄 License
@@ -336,6 +353,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 > BitBasel is a community-focused platform combining the permanence of Bitcoin Ordinals with the innovation of smart contracts and dynamic NFTs. This codebase is optimized for developers with clean, documented components under 150 lines each.
 
 ### Quick Development Setup
+
 ```bash
 git clone <repo-url> && cd BitBasel
 npm install && npm run dev

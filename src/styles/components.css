@@ -142,7 +142,7 @@
   border-color: var(--color-bitbasel-pink);
   background: var(--color-bitbasel-pink-light);
   transform: translateY(-2px);
-  box-shadow: 
+  box-shadow:
     0 8px 25px rgba(255, 20, 147, 0.15),
     0 0 0 1px rgba(255, 20, 147, 0.1);
 }
@@ -217,7 +217,7 @@
   border-radius: 4px;
   overflow: hidden;
   background: var(--color-gallery-black);
-  transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
 }
@@ -232,15 +232,19 @@
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   mask-composite: xor;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
 }
 
 .ordinal-card:hover {
   transform: translateY(-12px) scale(1.03);
-  box-shadow: 
+  box-shadow:
     0 32px 64px -12px rgba(0, 0, 0, 0.6),
     0 0 0 1px var(--color-bitbasel-pink-light),
     0 0 32px rgba(255, 20, 147, 0.2),
@@ -305,7 +309,7 @@
   border-radius: 4px;
   overflow: hidden;
   background: var(--color-gallery-black);
-  transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   position: relative;
 }
@@ -320,15 +324,19 @@
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
-  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   mask-composite: xor;
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
 }
 
 .collection-card:hover {
   transform: translateY(-12px) scale(1.03);
-  box-shadow: 
+  box-shadow:
     0 32px 64px -12px rgba(0, 0, 0, 0.6),
     0 0 0 1px var(--color-bitbasel-pink-light),
     0 0 32px rgba(255, 20, 147, 0.2),
@@ -522,15 +530,15 @@
   margin: 4rem 0;
 }
 
-.featured-section, 
-.latest-section, 
+.featured-section,
+.latest-section,
 .newsletter-section {
   padding: 4rem 0;
   margin: 2rem 0;
 }
 
 .featured-section {
-  background: 
+  background:
     linear-gradient(180deg, transparent 0%, rgba(255, 20, 147, 0.02) 50%, transparent 100%),
     linear-gradient(45deg, transparent 49%, rgba(212, 175, 55, 0.05) 50%, transparent 51%);
   border-top: 1px solid rgba(255, 20, 147, 0.15);
@@ -551,7 +559,7 @@
 }
 
 .newsletter-section {
-  background: 
+  background:
     radial-gradient(ellipse at center, rgba(255, 20, 147, 0.08) 0%, transparent 70%),
     linear-gradient(135deg, var(--color-background) 0%, rgba(10, 10, 10, 0.8) 100%);
   border-top: 1px solid rgba(255, 20, 147, 0.2);
@@ -765,7 +773,12 @@
 .loading-image {
   width: 100%;
   height: 280px;
-  background: linear-gradient(90deg, var(--color-card) 25%, var(--color-card-hover) 50%, var(--color-card) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--color-card) 25%,
+    var(--color-card-hover) 50%,
+    var(--color-card) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
 }
@@ -776,7 +789,12 @@
 
 .loading-line {
   height: 1rem;
-  background: linear-gradient(90deg, var(--color-card) 25%, var(--color-card-hover) 50%, var(--color-card) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--color-card) 25%,
+    var(--color-card-hover) 50%,
+    var(--color-card) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
   border-radius: 6px;
@@ -797,7 +815,8 @@
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -827,7 +846,7 @@
 /* Homepage Styles - Gallery Aesthetic */
 .hero {
   background: var(--color-background);
-  background-image: 
+  background-image:
     radial-gradient(circle at 20% 20%, var(--color-bitbasel-pink-light) 0%, transparent 40%),
     radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.1) 0%, transparent 40%);
   padding: 8rem 0;
@@ -857,8 +876,6 @@
   opacity: 0.03;
   pointer-events: none;
 }
-
-
 
 .hero-title {
   font-size: 4rem;

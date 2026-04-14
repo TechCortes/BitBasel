@@ -78,6 +78,7 @@ Create environment files for different stages:
 - `.env.production` - Production settings
 
 Required variables:
+
 - `API_URL` - Backend API URL
 - `BASE_URL` - Frontend base URL
 - `WALLET_CONNECT_PROJECT_ID` - Wallet connection configuration
@@ -87,15 +88,18 @@ Required variables:
 ## Design System
 
 ### Typography
+
 - Custom "Machina" font family with fallbacks
 - Responsive typography classes (.text-heading-1, .text-body, etc.)
 
 ### Color Scheme
+
 - CSS custom properties in `:root`
 - Bitcoin/crypto specific colors (--color-bitcoin, --color-ordinals)
 - Dark mode support via prefers-color-scheme
 
 ### Components
+
 - Atomic design methodology
 - Consistent spacing and sizing
 - Mobile-first responsive design
@@ -114,18 +118,21 @@ Required variables:
 ## Development Guidelines
 
 ### Code Quality
+
 - ESLint configuration with Next.js rules
 - Prettier for consistent formatting
 - Husky pre-commit hooks for quality gates
 - TypeScript strict mode enabled
 
 ### Component Patterns
+
 - Functional components with hooks
 - MobX observer components for reactive updates
 - Props interfaces for all components
 - Error boundaries for wallet interactions
 
 ### Security Considerations
+
 - Wallet connections are client-side only
 - No private key storage or handling
 - Environment variables for sensitive configuration
@@ -134,17 +141,20 @@ Required variables:
 ## Common Tasks
 
 ### Adding New Components
+
 1. Create component in `/src/components/`
 2. Export from component file
 3. Add corresponding CSS to `/src/styles/components.css`
 4. Import and use in pages/components
 
 ### Wallet Integration
+
 - Extend `WalletStore.ts` for new wallet providers
 - Update `WalletConnect.tsx` with new wallet options
 - Test wallet connections in development environment
 
 ### API Integration
+
 - Add API endpoints to respective stores (MarketplaceStore, etc.)
 - Use Axios for HTTP requests
 - Handle loading states and error cases
@@ -153,6 +163,7 @@ Required variables:
 ## Build and Deployment
 
 The application builds to static files optimized for deployment:
+
 - Next.js optimized bundles
 - Static asset optimization
 - Environment-specific configurations

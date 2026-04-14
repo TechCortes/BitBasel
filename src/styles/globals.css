@@ -86,33 +86,43 @@ body {
   --color-bitbasel-pink-glow: rgba(255, 20, 147, 0.3);
   --color-gallery-gold: #d4af37;
   --color-gallery-cream: #faf7f2;
-  
+
   /* Bitcoin/Crypto specific colors */
   --color-bitcoin: #f7931a;
   --color-ordinals: #ff6b35;
-  
+
   /* Gallery aesthetic */
   --color-gallery-white: #ffffff;
   --color-gallery-black: #000000;
   --color-gallery-frame: #1a1a1a;
   --color-gallery-spotlight: #2a2a2a;
-  
+
   /* Accent variations */
   --color-accent-hover: #ff0080;
   --color-accent-light: rgba(255, 20, 147, 0.8);
-  
+
   /* Card and surface variations */
   --color-card: #0f0f0f;
   --color-card-hover: #1a1a1a;
   --color-border-light: #333333;
-  
+
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
   --gradient-accent: linear-gradient(135deg, #ff1493 0%, #ff69b4 35%, #ff1493 70%, #ff0080 100%);
   --gradient-surface: linear-gradient(135deg, #0a0a0a 0%, #0f0f0f 100%);
   --gradient-gallery: linear-gradient(180deg, #000000 0%, #0a0a0a 50%, #000000 100%);
-  --gradient-gallery-glow: radial-gradient(ellipse at center, rgba(255, 20, 147, 0.15) 0%, transparent 60%);
-  --gradient-exhibition: linear-gradient(45deg, rgba(255, 20, 147, 0.1) 0%, transparent 30%, rgba(212, 175, 55, 0.1) 70%, transparent 100%);
+  --gradient-gallery-glow: radial-gradient(
+    ellipse at center,
+    rgba(255, 20, 147, 0.15) 0%,
+    transparent 60%
+  );
+  --gradient-exhibition: linear-gradient(
+    45deg,
+    rgba(255, 20, 147, 0.1) 0%,
+    transparent 30%,
+    rgba(212, 175, 55, 0.1) 70%,
+    transparent 100%
+  );
 }
 
 /* Dark mode support */
@@ -222,7 +232,7 @@ body {
 
 .btn-primary:hover {
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 
+  box-shadow:
     0 12px 32px -8px rgba(255, 20, 147, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -245,7 +255,7 @@ body {
   border-color: var(--color-accent);
   background: var(--color-bitbasel-pink-light);
   transform: translateY(-3px) scale(1.02);
-  box-shadow: 
+  box-shadow:
     0 12px 32px -8px rgba(255, 20, 147, 0.3),
     inset 0 1px 0 rgba(255, 20, 147, 0.1);
   color: var(--color-bitbasel-pink);

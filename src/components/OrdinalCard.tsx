@@ -32,14 +32,18 @@ export const OrdinalCard: React.FC<OrdinalCardProps> = ({ ordinal, onClick }) =>
   const getMediaContent = () => {
     // Use crypto-themed placeholders based on collection or content
     if (ordinal.collection) {
-      if (ordinal.collection.toLowerCase().includes('ethereum') || 
-          ordinal.metaTitle?.toLowerCase().includes('ethereum') ||
-          ordinal.metaDescription?.toLowerCase().includes('ethereum')) {
+      if (
+        ordinal.collection.toLowerCase().includes('ethereum') ||
+        ordinal.metaTitle?.toLowerCase().includes('ethereum') ||
+        ordinal.metaDescription?.toLowerCase().includes('ethereum')
+      ) {
         return '/images/placeholder-ethereum-art.svg';
       }
-      if (ordinal.collection.toLowerCase().includes('bitcoin') ||
-          ordinal.metaTitle?.toLowerCase().includes('bitcoin') ||
-          ordinal.metaDescription?.toLowerCase().includes('bitcoin')) {
+      if (
+        ordinal.collection.toLowerCase().includes('bitcoin') ||
+        ordinal.metaTitle?.toLowerCase().includes('bitcoin') ||
+        ordinal.metaDescription?.toLowerCase().includes('bitcoin')
+      ) {
         return '/images/placeholder-bitcoin-art.svg';
       }
     }

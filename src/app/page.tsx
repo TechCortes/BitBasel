@@ -40,7 +40,8 @@ const HomePage: React.FC = observer(() => {
             <div className="section-header">
               <h2 className="text-heading-2">Dynamic Collections</h2>
               <p className="section-subtitle">
-                Smart contract-powered exhibitions featuring Bitcoin Ordinals and evolving NFT masterpieces
+                Smart contract-powered exhibitions featuring Bitcoin Ordinals and evolving NFT
+                masterpieces
               </p>
             </div>
             <MarketplaceGrid type="collections" featured={true} />
@@ -71,7 +72,10 @@ const HomePage: React.FC = observer(() => {
           <div className="container">
             <div className="newsletter-content">
               <h2 className="text-heading-2">Community Hub</h2>
-              <p>Join your city's crypto art movement - get updates on dynamic NFT drops, smart contract launches & Ordinals events.</p>
+              <p>
+                Join your city's crypto art movement - get updates on dynamic NFT drops, smart
+                contract launches & Ordinals events.
+              </p>
               <form className="newsletter-form">
                 <input
                   type="email"
