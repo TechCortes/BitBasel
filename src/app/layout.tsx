@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import StoreProvider from '@/store/StoreProvider';
 import '@/styles/globals.css';
 import '@/styles/components.css';
+import '@/styles/physical.css';
 
 export const metadata: Metadata = {
   title: "Cafe - Your City's Crypto Art Community Hub",
@@ -57,10 +58,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
+      <head />
       <body>
         <StoreProvider>
           <div id="root">{children}</div>

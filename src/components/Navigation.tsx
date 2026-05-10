@@ -24,11 +24,14 @@ export const Navigation: React.FC = observer(() => {
             <Link href="/collections" className="nav-link">
               Exhibitions
             </Link>
-            <Link href="/galleries" className="nav-link">
+            <Link href="/artists" className="nav-link">
               Artists
             </Link>
             <Link href="/marketplace" className="nav-link">
               Gallery
+            </Link>
+            <Link href="/artworks" className="nav-link">
+              Acquire
             </Link>
             <Link href="/about" className="nav-link">
               About
@@ -62,11 +65,14 @@ export const Navigation: React.FC = observer(() => {
             <Link href="/collections" className="nav-link mobile-link">
               Exhibitions
             </Link>
-            <Link href="/galleries" className="nav-link mobile-link">
+            <Link href="/artists" className="nav-link mobile-link">
               Artists
             </Link>
             <Link href="/marketplace" className="nav-link mobile-link">
               Gallery
+            </Link>
+            <Link href="/artworks" className="nav-link mobile-link">
+              Acquire
             </Link>
             <Link href="/about" className="nav-link mobile-link">
               About

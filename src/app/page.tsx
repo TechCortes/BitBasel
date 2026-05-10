@@ -2,19 +2,21 @@
 
 import React, { useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
+import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import MarketplaceGrid from '@/components/MarketplaceGrid';
-import { useMarketplaceStore } from '@/store/StoreProvider';
+import { useMarketplaceStore, usePhysicalStore } from '@/store/StoreProvider';
 
 const HomePage: React.FC = observer(() => {
   const marketplaceStore = useMarketplaceStore();
+  const physicalStore = usePhysicalStore();
 
   useEffect(() => {
-    // Fetch initial data
     marketplaceStore.fetchStats();
     marketplaceStore.fetchPriceData();
-  }, [marketplaceStore]);
+    physicalStore.loadData();
+  }, [marketplaceStore, physicalStore]);
 
   return (
     <>
@@ -64,6 +66,105 @@ const HomePage: React.FC = observer(() => {
             <div className="section-footer">
               <button className="btn-outline">Browse Gallery</button>
             </div>
+          </div>
+        </section>
+
+        {/* Physical Art — Acquire */}
+        <section className="phys-home-section">
+          <div className="phys-container">
+            <div className="phys-home-header">
+              <div>
+                <p className="phys-home-label">BitBasel Gallery · Miami</p>
+                <h2 className="phys-home-title">Physical Works</h2>
+              </div>
+              <Link href="/artworks" className="phys-home-link">
+                View all works →
+              </Link>
+            </div>
+
+            {physicalStore.loading ? (
+              <div style={{ padding: '4rem', textAlign: 'center', color: 'var(--phys-gray-400)' }}>
+                Loading…
+              </div>
+            ) : (
+              <div className="phys-home-grid">
+                {/* Featured — first available work */}
+                {physicalStore.artworks
+                  .filter((a) => a.availability === 'available')
+                  .slice(0, 1)
+                  .map((artwork) => {
+                    const artist = physicalStore.getArtistById(artwork.artistId);
+                    return (
+                      <Link
+                        key={artwork.id}
+                        href={`/artworks/${artwork.id}`}
+                        className="phys-home-featured"
+                        style={{ textDecoration: 'none' }}
+                      >
+                        <div className="phys-home-card-img">
+                          {artwork.images[0] ? (
+                            <img src={artwork.images[0]} alt={artwork.title} />
+                          ) : (
+                            <div
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                background: 'var(--phys-gray-100)',
+                              }}
+                            />
+                          )}
+                        </div>
+                        <div className="phys-home-card-info">
+                          <p className="phys-home-card-title">{artwork.title}</p>
+                          {artist && (
+                            <p className="phys-home-card-artist">
+                              {artist.name} · {artwork.year}
+                            </p>
+                          )}
+                        </div>
+                      </Link>
+                    );
+                  })}
+
+                {/* Secondary — next two works */}
+                {physicalStore.artworks
+                  .filter((a) => a.availability === 'available')
+                  .slice(1, 3)
+                  .map((artwork) => {
+                    const artist = physicalStore.getArtistById(artwork.artistId);
+                    return (
+                      <Link
+                        key={artwork.id}
+                        href={`/artworks/${artwork.id}`}
+                        className="phys-home-secondary"
+                        style={{ textDecoration: 'none' }}
+                      >
+                        <div className="phys-home-card-img">
+                          {artwork.images[0] ? (
+                            <img src={artwork.images[0]} alt={artwork.title} />
+                          ) : (
+                            <div
+                              style={{
+                                width: '100%',
+                                height: '100%',
+                                background: 'var(--phys-gray-100)',
+                              }}
+                            />
+                          )}
+                        </div>
+                        <div className="phys-home-card-info">
+                          <p className="phys-home-card-title">{artwork.title}</p>
+                          {artist && (
+                            <p className="phys-home-card-artist">
+                              {artist.name} · {artwork.year}
+                            </p>
+                          )}
+                        </div>
+                      </Link>
+                    );
+                  })}
+              </div>
+            )}
           </div>
         </section>
 

@@ -1,0 +1,1146 @@
+/* ============================================================
+   BitBasel — Physical Art Gallery
+   Institutional black & white design system
+   ============================================================ */
+
+:root {
+  --phys-white: #ffffff;
+  --phys-off-white: #f9f9f7;
+  --phys-gray-100: #f2f2f0;
+  --phys-gray-200: #e4e4e1;
+  --phys-gray-300: #c8c8c4;
+  --phys-gray-400: #a0a09c;
+  --phys-gray-500: #6e6e69;
+  --phys-gray-600: #4a4a46;
+  --phys-black: #0a0a0a;
+  --phys-ink: #1a1a18;
+
+  --phys-available: #1a1a18;
+  --phys-reserved: #6e6e69;
+  --phys-sold: #c8c8c4;
+
+  --phys-font-sans: 'Machina', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --phys-font-serif: 'Georgia', 'Times New Roman', serif;
+
+  --phys-spacing-xs: 0.5rem;
+  --phys-spacing-sm: 1rem;
+  --phys-spacing-md: 2rem;
+  --phys-spacing-lg: 4rem;
+  --phys-spacing-xl: 8rem;
+
+  --phys-max-width: 1320px;
+  --phys-border: 1px solid var(--phys-gray-200);
+  --phys-transition: 0.25s ease;
+}
+
+/* ── Layout ─────────────────────────────────────────────── */
+
+.phys-section {
+  background: var(--phys-white);
+  color: var(--phys-black);
+  min-height: 100vh;
+}
+
+.phys-container {
+  max-width: var(--phys-max-width);
+  margin: 0 auto;
+  padding: 0 var(--phys-spacing-md);
+}
+
+/* ── Page Header ─────────────────────────────────────────── */
+
+.phys-page-header {
+  border-bottom: 1px solid var(--phys-black);
+  padding: var(--phys-spacing-lg) 0 var(--phys-spacing-md);
+}
+
+.phys-page-title {
+  font-family: var(--phys-font-sans);
+  font-size: clamp(2rem, 5vw, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--phys-black);
+  margin: 0;
+}
+
+.phys-page-subtitle {
+  font-family: var(--phys-font-sans);
+  font-size: 0.875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--phys-gray-500);
+  margin-top: 0.75rem;
+}
+
+/* ── Artwork Grid ────────────────────────────────────────── */
+
+.phys-grid-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 0;
+  padding-top: var(--phys-spacing-md);
+}
+
+.phys-artwork-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1px;
+  background: var(--phys-gray-200);
+  border-top: 1px solid var(--phys-gray-200);
+}
+
+/* ── Artwork Card ────────────────────────────────────────── */
+
+.phys-artwork-card {
+  background: var(--phys-white);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: background var(--phys-transition);
+}
+
+.phys-artwork-card:hover {
+  background: var(--phys-off-white);
+}
+
+.phys-artwork-card:hover .phys-card-image img {
+  transform: scale(1.03);
+}
+
+.phys-card-image {
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  background: var(--phys-gray-100);
+  position: relative;
+}
+
+.phys-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.phys-card-image-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--phys-gray-100);
+}
+
+.phys-card-image-placeholder svg {
+  width: 48px;
+  height: 48px;
+  color: var(--phys-gray-300);
+}
+
+.phys-availability-dot {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.phys-availability-dot.available {
+  background: var(--phys-available);
+}
+.phys-availability-dot.reserved {
+  background: var(--phys-reserved);
+}
+.phys-availability-dot.sold {
+  background: var(--phys-sold);
+}
+
+.phys-card-body {
+  padding: 1.25rem 1.25rem 1.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  border-top: var(--phys-border);
+}
+
+.phys-card-title {
+  font-family: var(--phys-font-sans);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--phys-black);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.phys-card-artist {
+  font-size: 0.875rem;
+  color: var(--phys-gray-500);
+  font-weight: 400;
+}
+
+.phys-card-meta {
+  font-size: 0.75rem;
+  color: var(--phys-gray-400);
+  margin-top: 0.5rem;
+  line-height: 1.6;
+}
+
+.phys-card-price {
+  font-family: var(--phys-font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--phys-black);
+  margin-top: auto;
+  padding-top: 0.75rem;
+}
+
+.phys-card-price.sold {
+  color: var(--phys-gray-400);
+  font-weight: 400;
+}
+
+/* ── Filter Sidebar ──────────────────────────────────────── */
+
+.phys-filter-sidebar {
+  border-right: var(--phys-border);
+  padding: var(--phys-spacing-md) var(--phys-spacing-md) var(--phys-spacing-md) 0;
+  position: sticky;
+  top: 80px;
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+.phys-filter-group {
+  margin-bottom: var(--phys-spacing-md);
+}
+
+.phys-filter-label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--phys-gray-500);
+  margin-bottom: 0.875rem;
+  display: block;
+}
+
+.phys-filter-options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.phys-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--phys-ink);
+  transition: color var(--phys-transition);
+}
+
+.phys-filter-option:hover {
+  color: var(--phys-black);
+}
+
+.phys-filter-option input[type='checkbox'] {
+  accent-color: var(--phys-black);
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
+.phys-filter-radio {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.phys-filter-radio-item {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--phys-ink);
+}
+
+.phys-filter-radio-item input[type='radio'] {
+  accent-color: var(--phys-black);
+}
+
+.phys-filter-clear {
+  font-size: 0.75rem;
+  color: var(--phys-gray-500);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  transition: color var(--phys-transition);
+}
+
+.phys-filter-clear:hover {
+  color: var(--phys-black);
+}
+
+.phys-filter-divider {
+  border: none;
+  border-top: var(--phys-border);
+  margin: var(--phys-spacing-sm) 0;
+}
+
+/* ── Artwork Detail Page ─────────────────────────────────── */
+
+.phys-detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 420px;
+  gap: var(--phys-spacing-lg);
+  padding: var(--phys-spacing-lg) 0;
+  min-height: calc(100vh - 80px);
+}
+
+.phys-detail-image-area {
+  display: flex;
+  flex-direction: column;
+  gap: var(--phys-spacing-sm);
+}
+
+.phys-detail-main-image {
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  background: var(--phys-gray-100);
+  position: relative;
+}
+
+.phys-detail-main-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.phys-detail-thumbnails {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.phys-detail-thumb {
+  width: 72px;
+  height: 72px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color var(--phys-transition);
+  background: var(--phys-gray-100);
+  flex-shrink: 0;
+}
+
+.phys-detail-thumb.active,
+.phys-detail-thumb:hover {
+  border-color: var(--phys-black);
+}
+
+.phys-detail-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Wall Label */
+.phys-wall-label {
+  border-top: 2px solid var(--phys-black);
+  padding-top: var(--phys-spacing-md);
+  position: sticky;
+  top: 80px;
+}
+
+.phys-wall-label-artist {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--phys-black);
+  margin: 0 0 0.25rem;
+}
+
+.phys-wall-label-title {
+  font-family: var(--phys-font-serif);
+  font-size: 1.375rem;
+  font-style: italic;
+  color: var(--phys-ink);
+  margin: 0 0 1.25rem;
+}
+
+.phys-wall-label-meta {
+  font-size: 0.875rem;
+  color: var(--phys-gray-500);
+  line-height: 1.8;
+}
+
+.phys-wall-label-meta span {
+  display: block;
+}
+
+.phys-wall-label-edition {
+  display: inline-block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  border: 1px solid var(--phys-gray-300);
+  padding: 3px 8px;
+  margin-top: 0.75rem;
+  color: var(--phys-gray-500);
+}
+
+.phys-wall-label-price {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--phys-black);
+  margin-top: var(--phys-spacing-sm);
+  padding-top: var(--phys-spacing-sm);
+  border-top: var(--phys-border);
+}
+
+.phys-wall-label-price.sold {
+  color: var(--phys-gray-400);
+  font-size: 0.875rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.phys-wall-label-price.reserved {
+  color: var(--phys-gray-500);
+  font-size: 0.875rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Dimensions toggle */
+.phys-dim-toggle {
+  display: inline-flex;
+  border: 1px solid var(--phys-gray-200);
+  margin-top: 0.5rem;
+}
+
+.phys-dim-btn {
+  background: none;
+  border: none;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  color: var(--phys-gray-400);
+  transition: all var(--phys-transition);
+}
+
+.phys-dim-btn.active {
+  background: var(--phys-black);
+  color: var(--phys-white);
+}
+
+/* Inquire CTA */
+.phys-inquire-btn {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  background: var(--phys-black);
+  color: var(--phys-white);
+  border: none;
+  font-family: var(--phys-font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: var(--phys-spacing-sm);
+  transition: background var(--phys-transition);
+}
+
+.phys-inquire-btn:hover {
+  background: var(--phys-ink);
+}
+
+.phys-inquire-btn:disabled {
+  background: var(--phys-gray-300);
+  cursor: not-allowed;
+}
+
+.phys-shipping-note {
+  font-size: 0.75rem;
+  color: var(--phys-gray-400);
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* Accordion sections */
+.phys-accordion {
+  border-top: var(--phys-border);
+  margin-top: var(--phys-spacing-md);
+}
+
+.phys-accordion-item {
+  border-bottom: var(--phys-border);
+}
+
+.phys-accordion-trigger {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 0;
+  background: none;
+  border: none;
+  font-family: var(--phys-font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--phys-black);
+  cursor: pointer;
+  text-align: left;
+}
+
+.phys-accordion-icon {
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: var(--phys-gray-400);
+  line-height: 1;
+}
+
+.phys-accordion-content {
+  padding-bottom: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--phys-gray-600);
+  line-height: 1.7;
+}
+
+/* Provenance Timeline */
+.phys-provenance-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.phys-provenance-item {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 1rem;
+  padding-bottom: 1rem;
+  position: relative;
+}
+
+.phys-provenance-item::before {
+  content: '';
+  position: absolute;
+  left: 18px;
+  top: 20px;
+  bottom: -4px;
+  width: 1px;
+  background: var(--phys-gray-200);
+}
+
+.phys-provenance-item:last-child::before {
+  display: none;
+}
+
+.phys-provenance-year {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--phys-gray-500);
+  padding-top: 2px;
+}
+
+.phys-provenance-dot {
+  position: absolute;
+  left: 14px;
+  top: 5px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--phys-black);
+  border: 2px solid var(--phys-white);
+  outline: 1px solid var(--phys-black);
+}
+
+.phys-provenance-text {
+  font-size: 0.875rem;
+  color: var(--phys-gray-600);
+  line-height: 1.5;
+}
+
+/* ── Inquire Modal ───────────────────────────────────────── */
+
+.phys-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  backdrop-filter: blur(3px);
+  padding: var(--phys-spacing-md);
+}
+
+.phys-modal {
+  background: var(--phys-white);
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.phys-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--phys-spacing-md) var(--phys-spacing-md) var(--phys-spacing-sm);
+  border-bottom: var(--phys-border);
+}
+
+.phys-modal-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--phys-black);
+}
+
+.phys-modal-subtitle {
+  font-size: 0.8125rem;
+  color: var(--phys-gray-500);
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.phys-modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: var(--phys-gray-400);
+  line-height: 1;
+  padding: 0;
+  margin-left: 1rem;
+  flex-shrink: 0;
+  transition: color var(--phys-transition);
+}
+
+.phys-modal-close:hover {
+  color: var(--phys-black);
+}
+
+.phys-modal-body {
+  padding: var(--phys-spacing-md);
+}
+
+.phys-form-group {
+  margin-bottom: 1.25rem;
+}
+
+.phys-form-label {
+  display: block;
+  font-size: 0.6875rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--phys-gray-500);
+  margin-bottom: 0.5rem;
+}
+
+.phys-form-input,
+.phys-form-textarea,
+.phys-form-select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--phys-gray-200);
+  background: var(--phys-white);
+  font-family: var(--phys-font-sans);
+  font-size: 0.9375rem;
+  color: var(--phys-black);
+  outline: none;
+  transition: border-color var(--phys-transition);
+  -webkit-appearance: none;
+}
+
+.phys-form-input:focus,
+.phys-form-textarea:focus,
+.phys-form-select:focus {
+  border-color: var(--phys-black);
+}
+
+.phys-form-textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.phys-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.phys-modal-submit {
+  width: 100%;
+  padding: 1rem;
+  background: var(--phys-black);
+  color: var(--phys-white);
+  border: none;
+  font-family: var(--phys-font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background var(--phys-transition);
+  margin-top: 0.75rem;
+}
+
+.phys-modal-submit:hover {
+  background: var(--phys-ink);
+}
+.phys-modal-submit:disabled {
+  background: var(--phys-gray-300);
+  cursor: not-allowed;
+}
+
+.phys-modal-privacy {
+  font-size: 0.75rem;
+  color: var(--phys-gray-400);
+  line-height: 1.6;
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.phys-modal-success {
+  padding: var(--phys-spacing-md);
+  text-align: center;
+}
+
+.phys-modal-success h3 {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--phys-black);
+  margin-bottom: 0.5rem;
+}
+
+.phys-modal-success p {
+  font-size: 0.875rem;
+  color: var(--phys-gray-500);
+  line-height: 1.6;
+}
+
+/* ── Artist Pages ────────────────────────────────────────── */
+
+.phys-artist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1px;
+  background: var(--phys-gray-200);
+  border-top: 1px solid var(--phys-gray-200);
+  margin-top: var(--phys-spacing-md);
+}
+
+.phys-artist-card {
+  background: var(--phys-white);
+  padding: var(--phys-spacing-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--phys-spacing-sm);
+  cursor: pointer;
+  transition: background var(--phys-transition);
+  text-decoration: none;
+  color: inherit;
+}
+
+.phys-artist-card:hover {
+  background: var(--phys-off-white);
+}
+
+.phys-artist-portrait {
+  width: 100%;
+  aspect-ratio: 1;
+  overflow: hidden;
+  background: var(--phys-gray-100);
+}
+
+.phys-artist-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  filter: grayscale(100%);
+  transition: filter 0.4s ease;
+}
+
+.phys-artist-card:hover .phys-artist-portrait img {
+  filter: grayscale(40%);
+}
+
+.phys-artist-portrait-placeholder {
+  width: 100%;
+  height: 100%;
+  background: var(--phys-gray-100);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  color: var(--phys-gray-300);
+}
+
+.phys-artist-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--phys-black);
+  margin: 0;
+}
+
+.phys-artist-meta {
+  font-size: 0.8125rem;
+  color: var(--phys-gray-500);
+}
+
+.phys-artist-short-bio {
+  font-size: 0.875rem;
+  color: var(--phys-gray-600);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.phys-medium-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.phys-medium-tag {
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: 1px solid var(--phys-gray-200);
+  padding: 3px 8px;
+  color: var(--phys-gray-500);
+}
+
+/* Artist Profile Page */
+.phys-profile-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--phys-spacing-lg);
+  padding: var(--phys-spacing-lg) 0;
+}
+
+.phys-profile-sidebar {
+  position: sticky;
+  top: 80px;
+  align-self: start;
+}
+
+.phys-profile-portrait {
+  width: 100%;
+  aspect-ratio: 3/4;
+  overflow: hidden;
+  background: var(--phys-gray-100);
+  margin-bottom: var(--phys-spacing-md);
+}
+
+.phys-profile-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%);
+}
+
+.phys-profile-name {
+  font-size: 1.75rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--phys-black);
+  margin: 0 0 0.25rem;
+}
+
+.phys-profile-nationality {
+  font-size: 0.875rem;
+  color: var(--phys-gray-500);
+  margin-bottom: var(--phys-spacing-sm);
+}
+
+.phys-profile-bio {
+  font-size: 0.9375rem;
+  color: var(--phys-gray-600);
+  line-height: 1.75;
+  margin-bottom: var(--phys-spacing-md);
+}
+
+.phys-cv-section {
+  margin-top: var(--phys-spacing-md);
+}
+
+.phys-cv-section-title {
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--phys-gray-500);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: var(--phys-border);
+}
+
+.phys-cv-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.phys-cv-item {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: var(--phys-border);
+  font-size: 0.875rem;
+}
+
+.phys-cv-year {
+  color: var(--phys-gray-400);
+  font-weight: 500;
+}
+
+.phys-cv-desc {
+  color: var(--phys-gray-600);
+}
+
+/* ── Homepage section ────────────────────────────────────── */
+
+.phys-home-section {
+  background: var(--phys-white);
+  color: var(--phys-black);
+  padding: var(--phys-spacing-xl) 0;
+  border-top: 2px solid var(--phys-black);
+}
+
+.phys-home-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--phys-spacing-md);
+  padding-bottom: var(--phys-spacing-sm);
+  border-bottom: var(--phys-border);
+}
+
+.phys-home-label {
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--phys-gray-500);
+  margin-bottom: 0.5rem;
+}
+
+.phys-home-title {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--phys-black);
+  margin: 0;
+}
+
+.phys-home-link {
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--phys-black);
+  text-decoration: none;
+  border-bottom: 1px solid var(--phys-black);
+  padding-bottom: 1px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity var(--phys-transition);
+}
+
+.phys-home-link:hover {
+  opacity: 0.5;
+}
+
+.phys-home-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1px;
+  background: var(--phys-gray-200);
+}
+
+.phys-home-featured {
+  background: var(--phys-white);
+  cursor: pointer;
+}
+
+.phys-home-featured:hover .phys-home-card-img img {
+  transform: scale(1.03);
+}
+
+.phys-home-card-img {
+  overflow: hidden;
+  background: var(--phys-gray-100);
+}
+
+.phys-home-featured .phys-home-card-img {
+  aspect-ratio: 3/4;
+}
+
+.phys-home-secondary .phys-home-card-img {
+  aspect-ratio: 1;
+}
+
+.phys-home-card-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.6s ease;
+}
+
+.phys-home-card-info {
+  padding: 1rem 1.25rem 1.5rem;
+  border-top: var(--phys-border);
+  background: var(--phys-white);
+}
+
+.phys-home-card-title {
+  font-family: var(--phys-font-serif);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--phys-black);
+  margin: 0 0 0.25rem;
+}
+
+.phys-home-card-artist {
+  font-size: 0.8125rem;
+  color: var(--phys-gray-500);
+}
+
+.phys-home-secondary {
+  background: var(--phys-white);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+}
+
+.phys-home-secondary:hover .phys-home-card-img img {
+  transform: scale(1.03);
+}
+
+/* ── Availability badge ──────────────────────────────────── */
+
+.phys-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--phys-gray-500);
+  margin-top: var(--phys-spacing-xs);
+}
+
+.phys-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.phys-badge-dot.available {
+  background: var(--phys-available);
+}
+.phys-badge-dot.reserved {
+  background: var(--phys-reserved);
+}
+.phys-badge-dot.sold {
+  background: var(--phys-sold);
+}
+
+/* ── No results ──────────────────────────────────────────── */
+
+.phys-no-results {
+  padding: var(--phys-spacing-xl) var(--phys-spacing-md);
+  text-align: center;
+  color: var(--phys-gray-400);
+  font-size: 0.9375rem;
+  grid-column: 1 / -1;
+  background: var(--phys-white);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+  .phys-grid-layout {
+    grid-template-columns: 1fr;
+  }
+  .phys-filter-sidebar {
+    position: static;
+    border-right: none;
+    border-bottom: var(--phys-border);
+    padding: var(--phys-spacing-sm) 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    max-height: none;
+  }
+  .phys-filter-group {
+    margin-bottom: 0;
+    min-width: 160px;
+  }
+  .phys-detail-layout {
+    grid-template-columns: 1fr;
+  }
+  .phys-wall-label {
+    position: static;
+  }
+  .phys-profile-layout {
+    grid-template-columns: 1fr;
+  }
+  .phys-profile-sidebar {
+    position: static;
+  }
+  .phys-home-grid {
+    grid-template-columns: 1fr;
+  }
+  .phys-home-featured .phys-home-card-img {
+    aspect-ratio: 4/3;
+  }
+}
+
+@media (max-width: 640px) {
+  .phys-container {
+    padding: 0 1rem;
+  }
+  .phys-detail-thumbnails {
+    overflow-x: auto;
+  }
+  .phys-form-row {
+    grid-template-columns: 1fr;
+  }
+  .phys-artwork-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 400px) {
+  .phys-artwork-grid {
+    grid-template-columns: 1fr;
+  }
+}

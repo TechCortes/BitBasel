@@ -3,15 +3,18 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { MarketplaceStore } from './MarketplaceStore';
 import { WalletStore } from './WalletStore';
+import { PhysicalMarketplaceStore } from './PhysicalMarketplaceStore';
 
 // Root store that combines all stores
 class RootStore {
   marketplace: MarketplaceStore;
   wallet: WalletStore;
+  physical: PhysicalMarketplaceStore;
 
   constructor() {
     this.marketplace = new MarketplaceStore();
     this.wallet = new WalletStore();
+    this.physical = new PhysicalMarketplaceStore();
   }
 }
 
@@ -47,6 +50,11 @@ export const useMarketplaceStore = () => {
 export const useWalletStore = () => {
   const { wallet } = useStore();
   return wallet;
+};
+
+export const usePhysicalStore = () => {
+  const { physical } = useStore();
+  return physical;
 };
 
 export default StoreProvider;
