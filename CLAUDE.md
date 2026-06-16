@@ -1,177 +1,148 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code when working with this repository.
 
 ## Project Overview
 
-BitBasel is a modern NextJS application for a Bitcoin Ordinals marketplace - Your City's CryptoArt Community. The project features wallet integration, responsive design, and state-of-the-art architecture.
+BitBasel is an institutional-grade marketplace for Bitcoin Ordinals and physical fine art. It is a Next.js 14 App Router application with client-side Bitcoin wallet integration, a physical artwork acquisition flow, and MobX reactive state management.
+
+The platform has two primary product surfaces:
+1. **Digital marketplace** — Bitcoin Ordinals browsing, collections, and trading.
+2. **Physical art gallery** — Represented artists, provenance records, inquiry-based acquisition.
 
 ## Technology Stack
 
 - **Framework**: Next.js 14.2.32 with App Router
-- **Language**: TypeScript with strict type checking
-- **State Management**: MobX 6 for reactive state management
-- **UI Framework**: Custom CSS with modern design system
-- **HTTP Client**: Axios for API communication
-- **Code Quality**: ESLint + Prettier + Husky for git hooks
-- **Wallet Integration**: Support for multiple Bitcoin wallets (Unisat, Xverse, etc.)
+- **Language**: TypeScript (strict mode)
+- **State management**: MobX 6
+- **HTTP client**: Axios
+- **Code quality**: ESLint + Prettier + Husky pre-commit hooks
+- **Wallet integration**: Unisat, Xverse, Leather, Ordinals Wallet, Phantom
 
 ## Development Commands
 
 ```bash
-# Install dependencies
-npm install
-
-# Development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Start production server
-npm start
-
-# Linting and formatting
-npm run lint
-npm run lint:fix
-npm run prettier
-npm run prettier:check
-
-# Type checking
-npm run type-check
+npm install          # Install dependencies
+npm run dev          # Start development server
+npm run build        # Production build
+npm start            # Start production server
+npm run type-check   # TypeScript check (no emit)
+npm run lint         # ESLint
+npm run lint:fix     # ESLint with auto-fix
+npm run prettier     # Prettier format all files
+npm run prettier:check  # Prettier check without writing
 ```
 
 ## Architecture
 
-### Core Structure
+### Directory Structure
 
-- `/src/app/` - Next.js App Router pages and layouts
-- `/src/components/` - Reusable React components
-- `/src/store/` - MobX state management
-- `/src/types/` - TypeScript type definitions
-- `/src/styles/` - CSS stylesheets and design system
+```
+src/
+├── app/
+│   ├── layout.tsx              # Root layout, metadata, global CSS imports
+│   ├── page.tsx                # Homepage — hero, featured collections, physical works
+│   ├── artists/                # Artist listing and profile routes
+│   └── artworks/               # Physical artwork grid and detail routes
+├── components/
+│   ├── Navigation.tsx          # Site navigation with wallet connect trigger
+│   ├── WalletConnect.tsx       # Multi-wallet connection modal
+│   ├── MarketplaceGrid.tsx     # Ordinals / collections grid
+│   ├── OrdinalCard.tsx         # Individual ordinal card
+│   ├── CollectionCard.tsx      # Collection card
+│   ├── Footer.tsx              # Site footer
+│   └── physical/               # Physical art sub-system
+│       ├── ArtworkCard.tsx
+│       ├── ArtworkDetail.tsx
+│       ├── ArtworkFilter.tsx
+│       ├── ArtistCard.tsx
+│       ├── ArtistProfile.tsx
+│       ├── InquireModal.tsx
+│       ├── ProvenanceTimeline.tsx
+│       └── DimensionsToggle.tsx
+├── store/
+│   ├── MarketplaceStore.ts         # Ordinals, collections, filtering, search
+│   ├── WalletStore.ts              # Wallet connection, transactions, session
+│   ├── PhysicalMarketplaceStore.ts # Physical artworks, artists, inquiries
+│   └── StoreProvider.tsx           # Root store context
+├── types/
+│   ├── ordinals.ts             # Ordinal, Collection, Gallery, MarketplaceStats
+│   ├── wallet.ts               # WalletInfo, WalletProvider, TransactionStatus
+│   └── physicalArt.ts          # PhysicalArtwork, PhysicalArtist, ArtworkInquiry
+├── styles/
+│   ├── globals.css             # Root CSS variables and base styles
+│   ├── components.css          # Digital marketplace component styles
+│   └── physical.css            # Physical art design system (institutional B&W)
+└── data/
+    ├── mockData.ts             # Development mock data for ordinals/collections
+    └── physicalMockData.ts     # Development mock data for physical artworks/artists
+```
 
 ### State Management
 
-- `/src/store/MarketplaceStore.ts` - Ordinals and collections state
-- `/src/store/WalletStore.ts` - Wallet connection and transaction state
-- `/src/store/StoreProvider.tsx` - Root store and React context
+Each store domain is independent:
+- `MarketplaceStore` — ordinals, collections, search/filter state, price data.
+- `WalletStore` — connection lifecycle, security monitoring, transaction signing, balance.
+- `PhysicalMarketplaceStore` — physical artworks, artist bios, inquiry submission.
 
-### Key Components
+Access stores via hooks exported from `StoreProvider.tsx`:
+```ts
+const marketplaceStore = useMarketplaceStore();
+const walletStore = useWalletStore();
+const physicalStore = usePhysicalMarketplaceStore();
+```
 
-- `Navigation.tsx` - Responsive navigation with wallet integration
-- `WalletConnect.tsx` - Multi-wallet connection modal
-- `MarketplaceGrid.tsx` - Grid layout for ordinals and collections
-- `OrdinalCard.tsx` - Individual ordinal display component
-- `CollectionCard.tsx` - Collection display component
+### Design System
 
-### Types and Interfaces
-
-- `/src/types/ordinals.ts` - Bitcoin Ordinals, Collections, Galleries
-- `/src/types/wallet.ts` - Wallet connection and transaction types
+Two visual systems coexist:
+- **Digital / Ordinals**: Dark background, pink accent (`#ff1493`), Machina typeface, neon glow. Styles in `globals.css` + `components.css`.
+- **Physical / Fine Art**: Black-and-white institutional, wall-label typography, accordion details, cm/in toggle. Styles in `physical.css`.
 
 ## Environment Variables
 
-Create environment files for different stages:
-
-- `.env.development` - Development settings
-- `.env.production` - Production settings
+Environment files (`.env.development`, `.env.production`) are excluded from version control. Use `.env.example` as the reference template.
 
 Required variables:
-
-- `API_URL` - Backend API URL
-- `BASE_URL` - Frontend base URL
-- `WALLET_CONNECT_PROJECT_ID` - Wallet connection configuration
-- `BITCOIN_NETWORK` - 'mainnet' or 'testnet'
-- Social media links (TWITTER_URL, DISCORD_URL, TELEGRAM_URL)
-
-## Design System
-
-### Typography
-
-- Custom "Machina" font family with fallbacks
-- Responsive typography classes (.text-heading-1, .text-body, etc.)
-
-### Color Scheme
-
-- CSS custom properties in `:root`
-- Bitcoin/crypto specific colors (--color-bitcoin, --color-ordinals)
-- Dark mode support via prefers-color-scheme
-
-### Components
-
-- Atomic design methodology
-- Consistent spacing and sizing
-- Mobile-first responsive design
-
-## Key Features
-
-1. **Bitcoin Wallet Integration**: Multi-wallet support for Bitcoin transactions
-2. **Ordinals Marketplace**: Display and trade Bitcoin Ordinal inscriptions
-3. **Collection Management**: Curated collections with verification badges
-4. **Responsive Design**: Mobile-optimized interface
-5. **State Management**: Reactive MobX stores for complex state
-6. **Type Safety**: Full TypeScript implementation
-7. **Modern CSS**: Custom properties, Grid, Flexbox
-8. **SEO Optimized**: Next.js metadata API for search optimization
+- `API_URL` — Backend API base URL
+- `BASE_URL` — Public-facing application URL
+- `WALLET_CONNECT_PROJECT_ID`
+- `BITCOIN_NETWORK` — `mainnet` or `testnet`
+- `ORDINALS_API_URL`
 
 ## Development Guidelines
 
-### Code Quality
-
-- ESLint configuration with Next.js rules
-- Prettier for consistent formatting
-- Husky pre-commit hooks for quality gates
-- TypeScript strict mode enabled
-
-### Component Patterns
-
-- Functional components with hooks
-- MobX observer components for reactive updates
-- Props interfaces for all components
-- Error boundaries for wallet interactions
-
-### Security Considerations
-
-- Wallet connections are client-side only
-- No private key storage or handling
-- Environment variables for sensitive configuration
-- Secure headers in Next.js config
-
-## Common Tasks
-
-### Adding New Components
-
-1. Create component in `/src/components/`
-2. Export from component file
-3. Add corresponding CSS to `/src/styles/components.css`
-4. Import and use in pages/components
+### Components
+- Functional components only; MobX state consumers must be wrapped with `observer`.
+- Props interfaces defined in the same file as the component.
+- No `console.log`, `console.debug`, or `// TODO` in committed code.
+- No inline styles for values that belong in the CSS design system.
 
 ### Wallet Integration
+- All wallet operations are client-side only. No private key handling server-side.
+- `WalletStore` validates the stored wallet session on load (24-hour expiry, structural validation).
+- Balance for wallets without a native `getBalance` RPC (Leather, Phantom) is fetched via the Blockstream API (`https://blockstream.info/api/address/<address>`).
+- To add a new wallet provider: implement a `connect<Provider>` method in `WalletStore`, add the provider to `WALLET_PROVIDERS` in `WalletConnect.tsx`, and extend `WalletProvider` in `types/wallet.ts`.
 
-- Extend `WalletStore.ts` for new wallet providers
-- Update `WalletConnect.tsx` with new wallet options
-- Test wallet connections in development environment
+### Physical Art Acquisition Flow
+- Pricing may be `null` (price on application). The `InquireModal` handles both priced and POA works.
+- Provenance records are ordered chronologically in `ProvenanceTimeline`.
+- The `DimensionsToggle` stores the user's cm/in preference in component state (no persistence needed).
 
-### API Integration
+### Adding New Routes
+1. Create the page file under `src/app/<route>/page.tsx`.
+2. If the page reads from a store, import the relevant hook from `StoreProvider.tsx`.
+3. Add corresponding navigation entries in `Navigation.tsx`.
+4. Write page-level CSS in the appropriate stylesheet (`components.css` for digital, `physical.css` for physical art).
 
-- Add API endpoints to respective stores (MarketplaceStore, etc.)
-- Use Axios for HTTP requests
-- Handle loading states and error cases
-- Update TypeScript interfaces as needed
+## Security Notes
+- Never add private keys, seed phrases, or production secrets to any file in this repository.
+- Wallet session data in `localStorage` uses the key `bitbasel_wallet` and contains only: `{ provider, address, timestamp, version }`.
+- Security monitoring runs on a 30-second interval in `WalletStore.setupSecurityMonitoring()` and auto-disconnects on account change.
 
-## Build and Deployment
-
-The application builds to static files optimized for deployment:
-
-- Next.js optimized bundles
-- Static asset optimization
-- Environment-specific configurations
-- Error tracking during build process
-
-## Browser Support
-
-- Modern browsers with ES6+ support
-- Mobile Safari and Chrome optimization
-- Bitcoin wallet extension compatibility
-- LocalStorage API for wallet persistence
+## Documentation
+- [`README.md`](README.md) — Public-facing project overview and setup guide.
+- [`SECURITY.md`](SECURITY.md) — Responsible disclosure and security architecture.
+- [`CONTRIBUTING.md`](CONTRIBUTING.md) — Branch conventions, commit standards, PR process.
+- [`CHANGELOG.md`](CHANGELOG.md) — Version history in Keep a Changelog format.
+- [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) — Community standards.
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — System architecture and diagrams.

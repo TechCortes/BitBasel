@@ -165,7 +165,7 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
         </div>
 
         <div className="wallet-modal-footer">
-          <p className="text-small">By connecting, you agree to Cafe's Terms of Service</p>
+          <p className="text-small">By connecting, you agree to BitBasel's Terms of Service</p>
         </div>
       </div>
     </div>

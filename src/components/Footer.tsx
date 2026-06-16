@@ -9,10 +9,10 @@ export const Footer: React.FC = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-section">
-            <h3>Cafe</h3>
+            <h3>BitBasel</h3>
             <p>
-              Your city's premier Bitcoin Ordinals marketplace. Discover, collect, and trade digital
-              art on the Bitcoin blockchain.
+              Your city's institutional-grade marketplace for Bitcoin Ordinals and physical fine art.
+              Discover, collect, and acquire works on the Bitcoin blockchain.
             </p>
             <div className="social-links">
               <a
@@ -99,7 +99,7 @@ export const Footer: React.FC = () => {
 
         <div className="footer-bottom">
           <div className="footer-bottom-content">
-            <p>&copy; 2024 Cafe. All rights reserved.</p>
+            <p>&copy; 2026 BitBasel. All rights reserved.</p>
             <div className="footer-bottom-links">
               <Link href="/privacy" className="footer-link">
                 Privacy Policy

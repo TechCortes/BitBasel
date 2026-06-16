@@ -16,7 +16,7 @@ export const Navigation: React.FC = observer(() => {
       <div className="container">
         <div className="nav-content">
           <Link href="/" className="nav-logo">
-            Cafe
+            BitBasel
           </Link>
 
           {/* Desktop Navigation */}

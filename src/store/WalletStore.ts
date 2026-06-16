@@ -542,8 +542,8 @@ export class WalletStore {
             break;
           case 'leather':
           case 'phantom':
-            // These wallets may require different balance fetching approaches
-            // For now, keep existing balance
+            // Neither wallet exposes a direct getBalance RPC — query Blockstream
+            newBalance = await this.fetchAddressBalance(this.walletInfo.address);
             break;
           default:
             break;
@@ -621,6 +621,15 @@ export class WalletStore {
         this.clearError();
       }
     }, 5000);
+  }
+
+  // Fetch confirmed BTC balance (sats) via Blockstream for wallets without a native getBalance
+  private async fetchAddressBalance(address: string): Promise<number> {
+    const res = await fetch(`https://blockstream.info/api/address/${address}`);
+    if (!res.ok) throw new Error('Failed to fetch balance from Blockstream');
+    const data = await res.json();
+    const { funded_txo_sum, spent_txo_sum } = data.chain_stats;
+    return funded_txo_sum - spent_txo_sum;
   }
 
   // Clear error

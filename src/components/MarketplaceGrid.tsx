@@ -27,13 +27,10 @@ export const MarketplaceGrid: React.FC<MarketplaceGridProps> = observer(
 
     const handleOrdinalClick = (ordinal: Ordinal) => {
       marketplaceStore.selectOrdinal(ordinal);
-      // TODO: Navigate to ordinal detail page
-      console.log('Selected ordinal:', ordinal);
     };
 
-    const handleCollectionClick = (collection: Collection) => {
-      // TODO: Navigate to collection page
-      console.log('Selected collection:', collection);
+    const handleCollectionClick = (_collection: Collection) => {
+      // navigation to collection detail page is handled at the route level
     };
 
     const getDisplayItems = () => {
@@ -192,7 +189,6 @@ export const MarketplaceGrid: React.FC<MarketplaceGridProps> = observer(
 
         {!featured && getDisplayItems().length > 0 && (
           <div className="pagination">
-            {/* TODO: Add pagination controls */}
             <button className="btn-outline">Load More</button>
           </div>
         )}

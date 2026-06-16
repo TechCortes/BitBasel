@@ -5,14 +5,14 @@ import '@/styles/components.css';
 import '@/styles/physical.css';
 
 export const metadata: Metadata = {
-  title: "Cafe - Your City's Crypto Art Community Hub",
+  title: "BitBasel — Your City's Crypto Art Community",
   description:
-    "Phenomenal marketplace combining Bitcoin Ordinals with smart contracts and dynamic NFTs. Join your city's crypto art community with curated exhibitions and evolving digital masterpieces.",
+    "Institutional-grade marketplace uniting Bitcoin Ordinals, physical fine art, and dynamic NFTs. Discover curated exhibitions, connect with artists, and acquire works on the Bitcoin blockchain.",
   keywords:
-    'Bitcoin Ordinals, Smart Contracts, Dynamic NFTs, Crypto Art Community, Digital Gallery, Blockchain Art, Community Hub, Art Basel',
-  authors: [{ name: 'Cafe Gallery' }],
-  creator: 'Cafe',
-  publisher: 'Cafe',
+    'Bitcoin Ordinals, Physical Art, Dynamic NFTs, Crypto Art Community, Digital Gallery, Blockchain Art, Fine Art Marketplace, Institutional Art',
+  authors: [{ name: 'BitBasel' }],
+  creator: 'BitBasel',
+  publisher: 'BitBasel',
   formatDetection: {
     email: false,
     address: false,
@@ -26,24 +26,24 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: '/',
-    title: "Cafe - Your City's Crypto Art Community Hub",
+    title: "BitBasel — Your City's Crypto Art Community",
     description:
-      "Phenomenal marketplace combining Bitcoin Ordinals with smart contracts and dynamic NFTs. Join your city's crypto art community with curated exhibitions and evolving digital masterpieces.",
-    siteName: 'Cafe',
+      "Institutional-grade marketplace uniting Bitcoin Ordinals, physical fine art, and dynamic NFTs. Discover curated exhibitions, connect with artists, and acquire works on the Bitcoin blockchain.",
+    siteName: 'BitBasel',
     images: [
       {
         url: '/images/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'Cafe - Bitcoin Ordinals Marketplace',
+        alt: 'BitBasel — Bitcoin Ordinals & Fine Art Marketplace',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: "Cafe - Your City's Crypto Art Community Hub",
+    title: "BitBasel — Your City's Crypto Art Community",
     description:
-      "Phenomenal marketplace combining Bitcoin Ordinals with smart contracts and dynamic NFTs. Join your city's crypto art community with curated exhibitions and evolving digital masterpieces.",
+      "Institutional-grade marketplace uniting Bitcoin Ordinals, physical fine art, and dynamic NFTs. Discover curated exhibitions, connect with artists, and acquire works on the Bitcoin blockchain.",
     creator: '@bitbasel',
     images: ['/images/twitter-image.png'],
   },
