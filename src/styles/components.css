@@ -1861,6 +1861,14 @@
     font-size: 0.875rem;
   }
 
+  /* Compact button text on very narrow screens */
+  .btn-primary,
+  .btn-outline {
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    padding: 0.875rem 1rem;
+  }
+
   .membership-page-title {
     font-size: 1.875rem;
   }
