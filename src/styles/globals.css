@@ -32,7 +32,7 @@ body {
   line-height: 1.6;
 }
 
-/* Typography System - Machina Font */
+/* Typography System — Machina Font */
 @font-face {
   font-family: 'Machina';
   src:
@@ -63,83 +63,42 @@ body {
   font-display: swap;
 }
 
-/* Color Variables - BitBasel Art Gallery Theme */
+/* Color Variables — Black & White */
 :root {
-  --color-primary: #ff1493; /* BitBasel pink */
-  --color-secondary: #ff69b4; /* Lighter pink */
-  --color-accent: #ff1493; /* BitBasel pink */
+  /* Backgrounds */
   --color-background: #000000;
   --color-surface: #0a0a0a;
-  --color-border: #2a2a2a;
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #cccccc;
-  --color-text-muted: #888888;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
-  --color-error: #ef4444;
-
-  /* BitBasel Gallery brand colors */
-  --color-bitbasel-pink: #ff1493;
-  --color-bitbasel-pink-soft: #ff69b4;
-  --color-bitbasel-pink-light: rgba(255, 20, 147, 0.1);
-  --color-bitbasel-pink-gradient: linear-gradient(135deg, #ff1493, #ff69b4);
-  --color-bitbasel-pink-glow: rgba(255, 20, 147, 0.3);
-  --color-gallery-gold: #d4af37;
-  --color-gallery-cream: #faf7f2;
-
-  /* Bitcoin/Crypto specific colors */
-  --color-bitcoin: #f7931a;
-  --color-ordinals: #ff6b35;
-
-  /* Gallery aesthetic */
-  --color-gallery-white: #ffffff;
-  --color-gallery-black: #000000;
-  --color-gallery-frame: #1a1a1a;
-  --color-gallery-spotlight: #2a2a2a;
-
-  /* Accent variations */
-  --color-accent-hover: #ff0080;
-  --color-accent-light: rgba(255, 20, 147, 0.8);
-
-  /* Card and surface variations */
+  --color-surface-2: #111111;
   --color-card: #0f0f0f;
-  --color-card-hover: #1a1a1a;
-  --color-border-light: #333333;
+  --color-card-hover: #161616;
+  --color-gallery-frame: #0f0f0f;
+  --color-gallery-black: #000000;
+  --color-gallery-white: #ffffff;
 
-  /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
-  --gradient-accent: linear-gradient(135deg, #ff1493 0%, #ff69b4 35%, #ff1493 70%, #ff0080 100%);
+  /* Borders */
+  --color-border: #1e1e1e;
+  --color-border-light: #2a2a2a;
+  --color-border-strong: #3d3d3d;
+
+  /* Text */
+  --color-text-primary: #ffffff;
+  --color-text-secondary: #6b6b6b;
+  --color-text-muted: #3d3d3d;
+
+  /* Accent — white only */
+  --color-primary: #ffffff;
+  --color-accent: #ffffff;
+  --color-accent-muted: rgba(255, 255, 255, 0.06);
+  --color-accent-hover: rgba(255, 255, 255, 0.1);
+
+  /* Functional */
+  --color-success: #6b6b6b;
+  --color-error: #e6e6e6;
+  --color-warning: #a0a0a0;
+
+  /* Gradients — black to near-black only */
+  --gradient-primary: linear-gradient(135deg, #000000 0%, #111111 100%);
   --gradient-surface: linear-gradient(135deg, #0a0a0a 0%, #0f0f0f 100%);
-  --gradient-gallery: linear-gradient(180deg, #000000 0%, #0a0a0a 50%, #000000 100%);
-  --gradient-gallery-glow: radial-gradient(
-    ellipse at center,
-    rgba(255, 20, 147, 0.15) 0%,
-    transparent 60%
-  );
-  --gradient-exhibition: linear-gradient(
-    45deg,
-    rgba(255, 20, 147, 0.1) 0%,
-    transparent 30%,
-    rgba(212, 175, 55, 0.1) 70%,
-    transparent 100%
-  );
-}
-
-/* Dark mode support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-background: #0a0a0a;
-    --color-surface: #1a1a1a;
-    --color-text-primary: #ffffff;
-    --color-text-secondary: #cccccc;
-    --color-text-muted: #999999;
-    --color-border: #333333;
-  }
-
-  body {
-    color: var(--color-text-primary);
-    background: var(--color-background);
-  }
 }
 
 /* Typography Classes */
@@ -216,49 +175,43 @@ body {
   transform: scale(1.02);
 }
 
-/* Button styles */
+/* Buttons */
 .btn-primary {
-  background: var(--gradient-accent);
-  color: white;
-  border: none;
+  background: #ffffff;
+  color: #000000;
+  border: 1px solid #ffffff;
   padding: 0.875rem 2rem;
-  border-radius: 12px;
+  border-radius: 2px;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px -5px rgba(255, 20, 147, 0.3);
+  transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow:
-    0 12px 32px -8px rgba(255, 20, 147, 0.5),
-    0 0 0 1px rgba(255, 255, 255, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  filter: brightness(1.1) saturate(1.2);
+  background: transparent;
+  color: #ffffff;
 }
 
 .btn-outline {
   background: transparent;
   color: var(--color-text-primary);
-  border: 2px solid var(--color-border-light);
+  border: 1px solid var(--color-border-strong);
   padding: 0.875rem 2rem;
-  border-radius: 12px;
+  border-radius: 2px;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 .btn-outline:hover {
-  border-color: var(--color-accent);
-  background: var(--color-bitbasel-pink-light);
-  transform: translateY(-3px) scale(1.02);
-  box-shadow:
-    0 12px 32px -8px rgba(255, 20, 147, 0.3),
-    inset 0 1px 0 rgba(255, 20, 147, 0.1);
-  color: var(--color-bitbasel-pink);
+  border-color: #ffffff;
+  color: #ffffff;
 }
 
 /* Responsive design */
