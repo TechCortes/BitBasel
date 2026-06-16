@@ -12,11 +12,26 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'BitBasel — Private Membership for Art and Web3',
+  title: {
+    default: 'BitBasel — Private Membership for Art and Web3',
+    template: '%s — BitBasel',
+  },
   description:
-    'Two private membership tiers for creators and collectors at the intersection of Bitcoin Ordinals and institutional fine art. Join BitBasel.',
-  keywords:
-    'Bitcoin Ordinals, Physical Art, Dynamic NFTs, Crypto Art Community, Digital Gallery, Blockchain Art, Fine Art Marketplace, Institutional Art',
+    'Two private membership tiers for creators and collectors at the intersection of Bitcoin Ordinals and institutional fine art. Creator $49/mo · Collector $99/mo.',
+  keywords: [
+    'Bitcoin Ordinals',
+    'Fine Art NFT',
+    'Creator Membership',
+    'Collector Membership',
+    'Web3 Art',
+    'Bitcoin Art',
+    'Private Art Membership',
+    'Institutional Art Marketplace',
+    'BitBasel',
+    'Art and Web3',
+    'Ordinals Marketplace',
+    'Physical Fine Art',
+  ],
   authors: [{ name: 'BitBasel' }],
   creator: 'BitBasel',
   publisher: 'BitBasel',
@@ -25,7 +40,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.BASE_URL || 'http://localhost:3000'),
+  metadataBase: new URL(process.env.BASE_URL || 'https://bitbasel.vercel.app'),
   alternates: {
     canonical: '/',
   },
@@ -33,33 +48,30 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     url: '/',
-    title: "BitBasel — Your City's Crypto Art Community",
+    title: 'BitBasel — Private Membership for Art and Web3',
     description:
-      'Institutional-grade marketplace uniting Bitcoin Ordinals, physical fine art, and dynamic NFTs. Discover curated exhibitions, connect with artists, and acquire works on the Bitcoin blockchain.',
+      'Two private membership tiers. Creator $49/mo or Collector $99/mo — at the intersection of Bitcoin Ordinals and institutional fine art.',
     siteName: 'BitBasel',
-    images: [
-      {
-        url: '/images/og-image.png',
-        width: 1200,
-        height: 630,
-        alt: 'BitBasel — Bitcoin Ordinals & Fine Art Marketplace',
-      },
-    ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: "BitBasel — Your City's Crypto Art Community",
+    title: 'BitBasel — Private Membership for Art and Web3',
     description:
-      'Institutional-grade marketplace uniting Bitcoin Ordinals, physical fine art, and dynamic NFTs. Discover curated exhibitions, connect with artists, and acquire works on the Bitcoin blockchain.',
+      'Two tiers for the future of art and Web3. Creator $49/mo · Collector $99/mo. Bitcoin Ordinals meets institutional fine art.',
     creator: '@bitbasel',
-    images: ['/images/twitter-image.png'],
-  },
-  icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png',
+    site: '@bitbasel',
   },
   manifest: '/manifest.json',
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
