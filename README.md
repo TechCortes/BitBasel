@@ -41,13 +41,13 @@ src/
 
 **Technology stack:**
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 14 with App Router |
-| Language | TypeScript (strict mode) |
-| State management | MobX 6 |
-| HTTP client | Axios |
-| Code quality | ESLint + Prettier + Husky |
+| Layer              | Technology                                        |
+| ------------------ | ------------------------------------------------- |
+| Framework          | Next.js 14 with App Router                        |
+| Language           | TypeScript (strict mode)                          |
+| State management   | MobX 6                                            |
+| HTTP client        | Axios                                             |
+| Code quality       | ESLint + Prettier + Husky                         |
 | Wallet integration | Unisat, Xverse, Leather, Ordinals Wallet, Phantom |
 
 ---
@@ -89,16 +89,16 @@ The application is available at `http://localhost:3000`.
 
 All configuration is provided through environment variables. See [`.env.example`](.env.example) for the full reference. Never commit `.env.development` or `.env.production` — these are excluded by `.gitignore`.
 
-| Variable | Required | Description |
-|---|---|---|
-| `API_URL` | Yes | Backend API base URL |
-| `BASE_URL` | Yes | Public-facing application URL |
-| `WALLET_CONNECT_PROJECT_ID` | Yes | WalletConnect project identifier |
-| `BITCOIN_NETWORK` | Yes | `mainnet` or `testnet` |
-| `ORDINALS_API_URL` | Yes | Bitcoin Ordinals API endpoint |
-| `TWITTER_URL` | No | Social link rendered in footer |
-| `DISCORD_URL` | No | Social link rendered in footer |
-| `TELEGRAM_URL` | No | Social link rendered in footer |
+| Variable                    | Required | Description                      |
+| --------------------------- | -------- | -------------------------------- |
+| `API_URL`                   | Yes      | Backend API base URL             |
+| `BASE_URL`                  | Yes      | Public-facing application URL    |
+| `WALLET_CONNECT_PROJECT_ID` | Yes      | WalletConnect project identifier |
+| `BITCOIN_NETWORK`           | Yes      | `mainnet` or `testnet`           |
+| `ORDINALS_API_URL`          | Yes      | Bitcoin Ordinals API endpoint    |
+| `TWITTER_URL`               | No       | Social link rendered in footer   |
+| `DISCORD_URL`               | No       | Social link rendered in footer   |
+| `TELEGRAM_URL`              | No       | Social link rendered in footer   |
 
 ---
 

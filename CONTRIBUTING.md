@@ -65,13 +65,13 @@ For bug fixes and documentation improvements, you may proceed directly to a pull
 
 Branch from `main` using the following naming scheme:
 
-| Type | Pattern | Example |
-|---|---|---|
-| Feature | `feat/<description>` | `feat/artist-profile-page` |
-| Bug fix | `fix/<description>` | `fix/wallet-disconnect-error` |
-| Documentation | `docs/<description>` | `docs/api-reference` |
-| Refactor | `refactor/<description>` | `refactor/marketplace-store` |
-| Chore | `chore/<description>` | `chore/dependency-updates` |
+| Type          | Pattern                  | Example                       |
+| ------------- | ------------------------ | ----------------------------- |
+| Feature       | `feat/<description>`     | `feat/artist-profile-page`    |
+| Bug fix       | `fix/<description>`      | `fix/wallet-disconnect-error` |
+| Documentation | `docs/<description>`     | `docs/api-reference`          |
+| Refactor      | `refactor/<description>` | `refactor/marketplace-store`  |
+| Chore         | `chore/<description>`    | `chore/dependency-updates`    |
 
 Keep branches focused on a single concern. Avoid mixing feature work with unrelated refactors in the same branch.
 

@@ -9,6 +9,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Thi
 ## [Unreleased]
 
 ### Added
+
+- Private membership subscription system: Creator ($49/mo) and Collector ($99/mo) tiers.
+- `/membership` page with tier cards, full feature comparison matrix, how-it-works section, FAQ, and final CTA.
+- `MembershipTiers` component — reusable billing toggle (monthly/annual), tier cards, benefit lists, and CTAs.
+- Homepage hero redesigned: membership-focused headline, dual CTAs replacing generic "View Gallery" button.
+- Membership tiers section embedded on homepage directly below hero.
+- Navigation updated: "Membership" as first nav entry with distinct styling.
+- Footer "Membership" column replaces "Community" column with tier-specific links.
+- CSS: membership-specific styles added to `components.css` covering all membership UI states and responsive breakpoints.
 - Blockstream API fallback for balance fetching on wallets without a native `getBalance` RPC (Leather, Phantom).
 
 ---
@@ -16,6 +25,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Thi
 ## [0.3.0] — 2026-05-10
 
 ### Added
+
 - Physical fine art marketplace: acquisition flow for physical artworks alongside Bitcoin Ordinals.
 - Four represented artists (Santos, Chen, Reyes, Costa) with full CVs and biographies.
 - Eight artworks with provenance records, exhibition history, and pricing (including price-on-application).
@@ -27,6 +37,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Thi
 - Navigation updated: "Artists" links to `/artists`; "Acquire" links to `/artworks`.
 
 ### Changed
+
 - Navigation item "Artists" now routes to `/artists` (previously `/galleries`).
 
 ---
@@ -34,6 +45,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Thi
 ## [0.2.0] — 2026-04-15
 
 ### Added
+
 - Enhanced wallet security: connection attempt rate limiting, 24-hour session expiry, wallet state validation on interval.
 - Account-change listeners for Unisat and Phantom that auto-disconnect on address change.
 - Connection recovery mechanism with retry logic.
@@ -41,10 +53,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Thi
 - `docs/ARCHITECTURE.md` with system diagram and technical specifications.
 
 ### Changed
+
 - Wallet session storage now includes a version field for forward compatibility.
 - Balance update failures use exponential backoff with a maximum of three retries.
 
 ### Fixed
+
 - `WalletStore.checkExistingConnection` no longer throws when `localStorage` contains malformed data.
 
 ---
@@ -52,6 +66,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). Thi
 ## [0.1.0] — 2026-04-13
 
 ### Added
+
 - Initial release of the BitBasel platform.
 - Bitcoin Ordinals marketplace with collection browsing and search.
 - Multi-wallet support: Unisat, Xverse, Leather, Ordinals Wallet, Phantom.

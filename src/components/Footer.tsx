@@ -79,19 +79,19 @@ export const Footer: React.FC = () => {
           </div>
 
           <div className="footer-section">
-            <h3>Community</h3>
+            <h3>Membership</h3>
             <div className="footer-links">
-              <Link href="/creators" className="footer-link">
-                For Creators
+              <Link href="/membership?tier=creator" className="footer-link">
+                Creator Membership
               </Link>
-              <Link href="/collectors" className="footer-link">
-                For Collectors
+              <Link href="/membership?tier=collector" className="footer-link">
+                Collector Membership
               </Link>
-              <Link href="/galleries" className="footer-link">
-                Gallery Partnerships
+              <Link href="/membership?tier=enterprise" className="footer-link">
+                Gallery & Enterprise
               </Link>
-              <Link href="/newsletter" className="footer-link">
-                Newsletter
+              <Link href="/membership" className="footer-link">
+                Compare Tiers
               </Link>
             </div>
           </div>

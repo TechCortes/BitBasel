@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import MarketplaceGrid from '@/components/MarketplaceGrid';
+import MembershipTiers from '@/components/MembershipTiers';
 import { useMarketplaceStore, usePhysicalStore } from '@/store/StoreProvider';
 
 const HomePage: React.FC = observer(() => {
@@ -26,13 +27,33 @@ const HomePage: React.FC = observer(() => {
         {/* Hero Section */}
         <section className="hero">
           <div className="container">
+            <p className="hero-eyebrow">BitBasel — Private Membership</p>
             <h1 className="hero-title">
-              <span className="hero-highlight">Your City's Crypto Art Community</span>
+              The future of art and
+              <br />
+              Web3 belongs to
+              <br />
+              those who own it.
             </h1>
             <p className="hero-description">
-              Phenomenal marketplace combining Bitcoin Ordinals with smart contracts & dynamic NFTs
+              Two private tiers. Built for creators and collectors at the intersection of Bitcoin
+              Ordinals and institutional fine art.
             </p>
-            <button className="btn-primary hero-btn">View Gallery</button>
+            <div className="hero-actions">
+              <Link href="/membership?tier=creator" className="btn-primary hero-btn">
+                Join as Creator — $49/mo
+              </Link>
+              <Link href="/membership?tier=collector" className="btn-outline hero-btn">
+                Join as Collector — $99/mo
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Membership Tiers */}
+        <section className="membership-home-section">
+          <div className="container">
+            <MembershipTiers />
           </div>
         </section>
 
@@ -172,10 +193,10 @@ const HomePage: React.FC = observer(() => {
         <section className="newsletter-section">
           <div className="container">
             <div className="newsletter-content">
-              <h2 className="text-heading-2">Community Hub</h2>
+              <h2 className="text-heading-2">Stay Informed</h2>
               <p>
-                Join your city's crypto art movement - get updates on dynamic NFT drops, smart
-                contract launches & Ordinals events.
+                Private drops, new acquisitions, and collector events — delivered to you before the
+                public.
               </p>
               <form className="newsletter-form">
                 <input
