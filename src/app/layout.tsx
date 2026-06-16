@@ -7,7 +7,7 @@ import '@/styles/physical.css';
 export const metadata: Metadata = {
   title: "BitBasel — Your City's Crypto Art Community",
   description:
-    "Institutional-grade marketplace uniting Bitcoin Ordinals, physical fine art, and dynamic NFTs. Discover curated exhibitions, connect with artists, and acquire works on the Bitcoin blockchain.",
+    'Institutional-grade marketplace uniting Bitcoin Ordinals, physical fine art, and dynamic NFTs. Discover curated exhibitions, connect with artists, and acquire works on the Bitcoin blockchain.',
   keywords:
     'Bitcoin Ordinals, Physical Art, Dynamic NFTs, Crypto Art Community, Digital Gallery, Blockchain Art, Fine Art Marketplace, Institutional Art',
   authors: [{ name: 'BitBasel' }],
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     url: '/',
     title: "BitBasel — Your City's Crypto Art Community",
     description:
-      "Institutional-grade marketplace uniting Bitcoin Ordinals, physical fine art, and dynamic NFTs. Discover curated exhibitions, connect with artists, and acquire works on the Bitcoin blockchain.",
+      'Institutional-grade marketplace uniting Bitcoin Ordinals, physical fine art, and dynamic NFTs. Discover curated exhibitions, connect with artists, and acquire works on the Bitcoin blockchain.',
     siteName: 'BitBasel',
     images: [
       {
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "BitBasel — Your City's Crypto Art Community",
     description:
-      "Institutional-grade marketplace uniting Bitcoin Ordinals, physical fine art, and dynamic NFTs. Discover curated exhibitions, connect with artists, and acquire works on the Bitcoin blockchain.",
+      'Institutional-grade marketplace uniting Bitcoin Ordinals, physical fine art, and dynamic NFTs. Discover curated exhibitions, connect with artists, and acquire works on the Bitcoin blockchain.',
     creator: '@bitbasel',
     images: ['/images/twitter-image.png'],
   },

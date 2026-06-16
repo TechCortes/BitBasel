@@ -11,8 +11,8 @@ export const Footer: React.FC = () => {
           <div className="footer-section">
             <h3>BitBasel</h3>
             <p>
-              Your city's institutional-grade marketplace for Bitcoin Ordinals and physical fine art.
-              Discover, collect, and acquire works on the Bitcoin blockchain.
+              Your city's institutional-grade marketplace for Bitcoin Ordinals and physical fine
+              art. Discover, collect, and acquire works on the Bitcoin blockchain.
             </p>
             <div className="social-links">
               <a
