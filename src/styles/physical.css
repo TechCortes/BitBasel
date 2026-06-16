@@ -1128,19 +1128,84 @@
   .phys-container {
     padding: 0 1rem;
   }
+
   .phys-detail-thumbnails {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
+
   .phys-form-row {
     grid-template-columns: 1fr;
   }
+
   .phys-artwork-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  /* Prevent iOS zoom on form inputs */
+  .phys-form-input,
+  .phys-form-textarea,
+  .phys-form-select {
+    font-size: 1rem;
+  }
+
+  /* Touch targets */
+  .phys-accordion-trigger {
+    min-height: 48px;
+  }
+
+  .phys-inquire-btn,
+  .phys-modal-submit {
+    min-height: 48px;
+  }
+
+  .phys-dim-btn {
+    min-height: 36px;
+    padding: 0.5rem 0.875rem;
+  }
+
+  /* Reduce excessive vertical spacing */
+  .phys-home-section {
+    padding: 3rem 0;
+  }
+
+  .phys-page-header {
+    padding: 2rem 0 1.5rem;
+  }
+
+  .phys-profile-layout {
+    padding: 2rem 0;
+  }
+
+  .phys-detail-layout {
+    padding: 2rem 0;
+  }
+
+  /* Home grid: full width image section */
+  .phys-home-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  /* Modal overlay: reduce padding so modal is taller */
+  .phys-modal-overlay {
+    padding: 1rem;
+    align-items: flex-end;
+  }
+
+  .phys-modal {
+    max-height: 95vh;
+    border-radius: 0;
   }
 }
 
 @media (max-width: 400px) {
   .phys-artwork-grid {
     grid-template-columns: 1fr;
+  }
+
+  .phys-medium-tags {
+    gap: 0.25rem;
   }
 }

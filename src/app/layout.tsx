@@ -1,13 +1,20 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import StoreProvider from '@/store/StoreProvider';
 import '@/styles/globals.css';
 import '@/styles/components.css';
 import '@/styles/physical.css';
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: '#000000',
+};
+
 export const metadata: Metadata = {
-  title: "BitBasel — Your City's Crypto Art Community",
+  title: 'BitBasel — Private Membership for Art and Web3',
   description:
-    'Institutional-grade marketplace uniting Bitcoin Ordinals, physical fine art, and dynamic NFTs. Discover curated exhibitions, connect with artists, and acquire works on the Bitcoin blockchain.',
+    'Two private membership tiers for creators and collectors at the intersection of Bitcoin Ordinals and institutional fine art. Join BitBasel.',
   keywords:
     'Bitcoin Ordinals, Physical Art, Dynamic NFTs, Crypto Art Community, Digital Gallery, Blockchain Art, Fine Art Marketplace, Institutional Art',
   authors: [{ name: 'BitBasel' }],
