@@ -1843,6 +1843,16 @@
   }
 }
 
+/* iPhone SE and sub-375px: prevent hero button wrap */
+@media (max-width: 375px) {
+  .hero-btn {
+    font-size: 0.72rem;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}
+
 /* Small phones — 480px and below */
 @media (max-width: 480px) {
   .container {

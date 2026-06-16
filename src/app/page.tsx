@@ -41,10 +41,10 @@ const HomePage: React.FC = observer(() => {
             </p>
             <div className="hero-actions">
               <Link href="/membership?tier=creator" className="btn-primary hero-btn">
-                Join as Creator — $49/mo
+                Join as Creator&nbsp;&mdash;&nbsp;$49/mo
               </Link>
               <Link href="/membership?tier=collector" className="btn-outline hero-btn">
-                Join as Collector — $99/mo
+                Join as Collector&nbsp;&mdash;&nbsp;$99/mo
               </Link>
             </div>
           </div>
