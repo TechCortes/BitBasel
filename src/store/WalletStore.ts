@@ -1,14 +1,28 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { WalletInfo, WalletProvider, TransactionStatus } from '@/types/wallet';
+import {
+  WalletInfo,
+  WalletProvider,
+  TransactionStatus,
+  EVMWalletInfo,
+  EIP6963ProviderDetail,
+  EIP1193Provider,
+} from '@/types/wallet';
+import { watchEIP6963Providers } from '@/lib/eip6963';
 
 export class WalletStore {
-  // State
+  // Bitcoin state
   walletInfo: WalletInfo | null = null;
   connecting = false;
   error: string | null = null;
   transactions: TransactionStatus[] = [];
 
-  // Available wallet providers
+  // EVM state
+  evmWalletInfo: EVMWalletInfo | null = null;
+  evmConnecting = false;
+  evmError: string | null = null;
+  detectedEVMProviders: EIP6963ProviderDetail[] = [];
+
+  // Available Bitcoin wallet providers
   availableProviders: WalletProvider[] = [
     'unisat',
     'xverse',
@@ -17,10 +31,23 @@ export class WalletStore {
     'phantom',
   ];
 
+  // Non-observable implementation details
+  private _evmProvider: EIP1193Provider | null = null;
+  private _stopEIP6963Watch: (() => void) | null = null;
+  private _pendingEVMReconnectRdns: string | null = null;
+  private _pendingEVMReconnectAddress: string | null = null;
+
   constructor() {
-    makeAutoObservable(this);
+    makeAutoObservable(this, {
+      _evmProvider: false,
+      _stopEIP6963Watch: false,
+      _pendingEVMReconnectRdns: false,
+      _pendingEVMReconnectAddress: false,
+    } as any);
     this.checkExistingConnection();
+    this.checkExistingEVMConnection();
     this.setupSecurityMonitoring();
+    this.initEVMDiscovery();
   }
 
   // Production security monitoring
@@ -637,7 +664,263 @@ export class WalletStore {
     this.error = null;
   }
 
-  // Computed values
+  // EVM: start EIP-6963 provider discovery
+  initEVMDiscovery() {
+    if (typeof window === 'undefined') return;
+
+    const seen = new Set<string>();
+    const pendingRdns = this._pendingEVMReconnectRdns;
+    const pendingAddress = this._pendingEVMReconnectAddress;
+
+    this._stopEIP6963Watch = watchEIP6963Providers((detail) => {
+      if (seen.has(detail.info.uuid)) return;
+      seen.add(detail.info.uuid);
+
+      runInAction(() => {
+        this.detectedEVMProviders.push(detail);
+      });
+
+      // Silent reconnect if this matches the last session
+      if (pendingRdns && detail.info.rdns === pendingRdns && pendingAddress) {
+        this._pendingEVMReconnectRdns = null;
+        this._pendingEVMReconnectAddress = null;
+
+        detail.provider
+          .request({ method: 'eth_accounts' })
+          .then((result) => {
+            const accounts = result as string[];
+            if (
+              accounts &&
+              accounts.length > 0 &&
+              accounts[0].toLowerCase() === pendingAddress.toLowerCase()
+            ) {
+              return detail.provider.request({ method: 'eth_chainId' }).then((chainResult) => {
+                runInAction(() => {
+                  this.evmWalletInfo = {
+                    address: accounts[0],
+                    chainId: parseInt(chainResult as string, 16),
+                    connected: true,
+                    providerType: 'eip6963',
+                    providerName: detail.info.name,
+                    providerRdns: detail.info.rdns,
+                    providerIcon: detail.info.icon,
+                  };
+                });
+                this._evmProvider = detail.provider;
+                this.setupEVMProviderListeners(detail.provider);
+              });
+            } else {
+              localStorage.removeItem('bitbasel_evm_wallet');
+            }
+          })
+          .catch(() => localStorage.removeItem('bitbasel_evm_wallet'));
+      }
+    });
+  }
+
+  // EVM: check for an existing EVM session in localStorage (synchronous)
+  private checkExistingEVMConnection() {
+    if (typeof window === 'undefined') return;
+
+    const saved = localStorage.getItem('bitbasel_evm_wallet');
+    if (!saved) return;
+
+    try {
+      const parsed = JSON.parse(saved);
+      const age = Date.now() - (parsed.timestamp || 0);
+      const MAX_AGE = 24 * 60 * 60 * 1000;
+
+      if (age > MAX_AGE || !parsed.address || !parsed.providerType) {
+        localStorage.removeItem('bitbasel_evm_wallet');
+        return;
+      }
+
+      if (parsed.providerType === 'eip6963' && parsed.providerRdns) {
+        // Set pending reconnect — handled inside initEVMDiscovery when provider announces
+        this._pendingEVMReconnectRdns = parsed.providerRdns;
+        this._pendingEVMReconnectAddress = parsed.address;
+      }
+    } catch {
+      localStorage.removeItem('bitbasel_evm_wallet');
+    }
+  }
+
+  // EVM: connect via an EIP-6963 discovered provider
+  async connectEVMProvider(detail: EIP6963ProviderDetail) {
+    runInAction(() => {
+      this.evmConnecting = true;
+      this.evmError = null;
+    });
+
+    try {
+      const accounts = (await detail.provider.request({
+        method: 'eth_requestAccounts',
+      })) as string[];
+
+      if (!accounts || accounts.length === 0) {
+        throw new Error('No accounts returned');
+      }
+
+      const chainResult = await detail.provider.request({ method: 'eth_chainId' });
+      const chainId = parseInt(chainResult as string, 16);
+
+      this._evmProvider = detail.provider;
+      this.setupEVMProviderListeners(detail.provider);
+
+      runInAction(() => {
+        this.evmWalletInfo = {
+          address: accounts[0],
+          chainId,
+          connected: true,
+          providerType: 'eip6963',
+          providerName: detail.info.name,
+          providerRdns: detail.info.rdns,
+          providerIcon: detail.info.icon,
+        };
+        this.evmConnecting = false;
+      });
+
+      localStorage.setItem(
+        'bitbasel_evm_wallet',
+        JSON.stringify({
+          providerType: 'eip6963',
+          providerName: detail.info.name,
+          providerRdns: detail.info.rdns,
+          address: accounts[0],
+          chainId,
+          timestamp: Date.now(),
+          version: '1.0',
+        })
+      );
+    } catch (error) {
+      runInAction(() => {
+        this.evmError = this.parseEVMError(error);
+        this.evmConnecting = false;
+      });
+      throw error;
+    }
+  }
+
+  // EVM: connect via WalletConnect (lazy-loads the provider)
+  async connectWalletConnect() {
+    runInAction(() => {
+      this.evmConnecting = true;
+      this.evmError = null;
+    });
+
+    try {
+      const { getWalletConnectProvider } = await import('@/lib/walletconnect');
+      const provider = await getWalletConnectProvider();
+
+      await provider.connect();
+
+      const accounts = (await provider.request({ method: 'eth_accounts' })) as string[];
+      const chainResult = await provider.request({ method: 'eth_chainId' });
+      const chainId = parseInt(chainResult as string, 16);
+
+      if (!accounts || accounts.length === 0) {
+        throw new Error('No accounts returned from WalletConnect');
+      }
+
+      this._evmProvider = provider as unknown as EIP1193Provider;
+      provider.on('accountsChanged', (accs: unknown) => {
+        if ((accs as string[]).length === 0) this.disconnectEVM();
+      });
+      provider.on('disconnect', () => this.disconnectEVM());
+
+      runInAction(() => {
+        this.evmWalletInfo = {
+          address: accounts[0],
+          chainId,
+          connected: true,
+          providerType: 'walletconnect',
+          providerName: 'WalletConnect',
+        };
+        this.evmConnecting = false;
+      });
+
+      localStorage.setItem(
+        'bitbasel_evm_wallet',
+        JSON.stringify({
+          providerType: 'walletconnect',
+          providerName: 'WalletConnect',
+          address: accounts[0],
+          chainId,
+          timestamp: Date.now(),
+          version: '1.0',
+        })
+      );
+    } catch (error) {
+      runInAction(() => {
+        this.evmError = this.parseEVMError(error);
+        this.evmConnecting = false;
+      });
+      throw error;
+    }
+  }
+
+  // EVM: disconnect
+  async disconnectEVM() {
+    try {
+      if (this.evmWalletInfo?.providerType === 'walletconnect') {
+        try {
+          const { getWalletConnectProvider, resetWalletConnectProvider } = await import(
+            '@/lib/walletconnect'
+          );
+          const provider = await getWalletConnectProvider();
+          await provider.disconnect();
+          resetWalletConnectProvider();
+        } catch {
+          // Already disconnected
+        }
+      }
+    } finally {
+      runInAction(() => {
+        this.evmWalletInfo = null;
+        this.evmError = null;
+      });
+      this._evmProvider = null;
+      localStorage.removeItem('bitbasel_evm_wallet');
+    }
+  }
+
+  // EVM: clear error
+  clearEVMError() {
+    this.evmError = null;
+  }
+
+  // EVM: attach account/chain listeners to an EIP-1193 provider
+  private setupEVMProviderListeners(provider: EIP1193Provider) {
+    provider.on('accountsChanged', (accounts: unknown) => {
+      const accs = accounts as string[];
+      if (accs.length === 0 || (this.evmWalletInfo && accs[0] !== this.evmWalletInfo.address)) {
+        this.disconnectEVM();
+      }
+    });
+
+    provider.on('chainChanged', (chainId: unknown) => {
+      runInAction(() => {
+        if (this.evmWalletInfo) {
+          this.evmWalletInfo.chainId = parseInt(chainId as string, 16);
+        }
+      });
+    });
+  }
+
+  private parseEVMError(error: unknown): string {
+    if (error instanceof Error) {
+      if (error.message.includes('User rejected') || error.message.includes('user rejected')) {
+        return 'Connection was cancelled';
+      }
+      if (error.message.includes('project ID')) {
+        return 'WalletConnect not configured. Contact support.';
+      }
+      return error.message;
+    }
+    return 'Connection failed';
+  }
+
+  // Computed values — Bitcoin
   get isConnected() {
     return !!this.walletInfo?.connected;
   }
@@ -650,5 +933,30 @@ export class WalletStore {
 
   get balanceInBTC() {
     return (this.walletInfo?.balance || 0) / 100000000;
+  }
+
+  // Computed values — EVM
+  get isEVMConnected() {
+    return !!this.evmWalletInfo?.connected;
+  }
+
+  get shortEVMAddress() {
+    if (!this.evmWalletInfo?.address) return '';
+    const addr = this.evmWalletInfo.address;
+    return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
+  }
+
+  get evmChainName() {
+    const chainId = this.evmWalletInfo?.chainId;
+    if (!chainId) return '';
+    const names: Record<number, string> = {
+      1: 'Ethereum',
+      137: 'Polygon',
+      8453: 'Base',
+      42161: 'Arbitrum',
+      10: 'Optimism',
+      56: 'BNB Chain',
+    };
+    return names[chainId] || `Chain ${chainId}`;
   }
 }

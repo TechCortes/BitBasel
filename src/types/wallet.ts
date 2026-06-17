@@ -31,3 +31,33 @@ export interface TransactionStatus {
   confirmations: number;
   timestamp: string;
 }
+
+// EIP-6963 Multi Injected Provider Discovery
+export interface EIP6963ProviderInfo {
+  uuid: string;
+  name: string;
+  icon: string; // data: URI or URL
+  rdns: string; // e.g. "io.metamask", "com.coinbase.wallet"
+}
+
+export interface EIP1193Provider {
+  request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+  on: (event: string, listener: (...args: unknown[]) => void) => void;
+  removeListener: (event: string, listener: (...args: unknown[]) => void) => void;
+}
+
+export interface EIP6963ProviderDetail {
+  info: EIP6963ProviderInfo;
+  provider: EIP1193Provider;
+}
+
+// EVM wallet state
+export interface EVMWalletInfo {
+  address: string;
+  chainId: number;
+  connected: boolean;
+  providerType: 'eip6963' | 'walletconnect';
+  providerName: string;
+  providerRdns?: string;
+  providerIcon?: string;
+}

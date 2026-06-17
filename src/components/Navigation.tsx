@@ -41,7 +41,7 @@ export const Navigation: React.FC = observer(() => {
             </Link>
 
             <div className="wallet-section">
-              {walletStore.isConnected ? (
+              {walletStore.isConnected || walletStore.isEVMConnected ? (
                 <WalletConnect />
               ) : (
                 <button
@@ -85,7 +85,7 @@ export const Navigation: React.FC = observer(() => {
             </Link>
 
             <div className="mobile-wallet-section">
-              {walletStore.isConnected ? (
+              {walletStore.isConnected || walletStore.isEVMConnected ? (
                 <WalletConnect />
               ) : (
                 <button
