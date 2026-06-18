@@ -5,7 +5,7 @@
   "description": "Frontend NextJS application for BitBasel - Your City's CryptoArt Community",
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
@@ -15,12 +15,14 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@prisma/client": "^7.8.0",
     "@walletconnect/ethereum-provider": "^2.23.9",
     "antd": "^5.12.8",
     "axios": "^1.6.2",
     "mobx": "^6.12.0",
     "mobx-react-lite": "^4.0.5",
     "next": "^14.2.32",
+    "prisma": "^7.8.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
@@ -28,12 +30,14 @@
     "@types/node": "^20.10.5",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
+    "dotenv": "^17.4.2",
     "eslint": "^8.56.0",
     "eslint-config-next": "14.0.4",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.1.2",
     "husky": "^8.0.3",
     "lint-staged": "^15.2.0",
+    "playwright": "^1.61.0",
     "prettier": "^3.1.1",
     "typescript": "^5.3.3"
   },

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { observer } from 'mobx-react-lite';
 import { useWalletStore } from '@/store/StoreProvider';
 import WalletConnect from './WalletConnect';
@@ -17,7 +18,14 @@ export const Navigation: React.FC = observer(() => {
         <div className="container">
           <div className="nav-content">
             <Link href="/" className="nav-logo">
-              BitBasel
+              <Image
+                src="/images/logo.png"
+                alt="BitBasel"
+                width={140}
+                height={36}
+                priority
+                className="nav-logo-img"
+              />
             </Link>
 
             {/* Desktop Navigation */}
@@ -25,21 +33,20 @@ export const Navigation: React.FC = observer(() => {
               <Link href="/membership" className="nav-link nav-link-membership">
                 Membership
               </Link>
-              <Link href="/collections" className="nav-link">
-                Exhibitions
+              <Link href="/events" className="nav-link">
+                Events
               </Link>
               <Link href="/artists" className="nav-link">
                 Artists
               </Link>
-              <Link href="/marketplace" className="nav-link">
-                Gallery
-              </Link>
-              <Link href="/artworks" className="nav-link">
-                Acquire
-              </Link>
-              <Link href="/about" className="nav-link">
+              <a
+                href="https://bitbasel.com"
+                className="nav-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 About
-              </Link>
+              </a>
 
               <div className="wallet-section">
                 {walletStore.isConnected || walletStore.isEVMConnected ? (
@@ -69,21 +76,20 @@ export const Navigation: React.FC = observer(() => {
               <Link href="/membership" className="nav-link mobile-link nav-link-membership">
                 Membership
               </Link>
-              <Link href="/collections" className="nav-link mobile-link">
-                Exhibitions
+              <Link href="/events" className="nav-link mobile-link">
+                Events
               </Link>
               <Link href="/artists" className="nav-link mobile-link">
                 Artists
               </Link>
-              <Link href="/marketplace" className="nav-link mobile-link">
-                Gallery
-              </Link>
-              <Link href="/artworks" className="nav-link mobile-link">
-                Acquire
-              </Link>
-              <Link href="/about" className="nav-link mobile-link">
+              <a
+                href="https://bitbasel.com"
+                className="nav-link mobile-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 About
-              </Link>
+              </a>
 
               <div className="mobile-wallet-section">
                 {walletStore.isConnected || walletStore.isEVMConnected ? (

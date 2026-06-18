@@ -1,5 +1,7 @@
-/* Reset and base styles */
-* {
+/* Reset */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
@@ -16,129 +18,105 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
-  font-family:
-    'Machina',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    'Roboto',
-    'Oxygen',
-    'Ubuntu',
-    'Cantarell',
-    'Fira Sans',
-    'Droid Sans',
-    'Helvetica Neue',
-    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body {
+  font-family: var(--font-sans);
   color: var(--color-text-primary);
   background: var(--color-background);
   line-height: 1.6;
 }
 
-/* Typography System — Machina Font */
-@font-face {
-  font-family: 'Machina';
-  src:
-    url('/fonts/machina-regular.woff2') format('woff2'),
-    url('/fonts/machina-regular.woff') format('woff');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Machina';
-  src:
-    url('/fonts/machina-medium.woff2') format('woff2'),
-    url('/fonts/machina-medium.woff') format('woff');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Machina';
-  src:
-    url('/fonts/machina-bold.woff2') format('woff2'),
-    url('/fonts/machina-bold.woff') format('woff');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-/* Color Variables — Black & White */
+/* ─── Design Tokens ─── */
 :root {
-  /* Backgrounds */
+  /* Typography */
+  --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  --font-serif: 'Raleway', 'Helvetica Neue', Arial, sans-serif;
+
+  /* Backgrounds — pure black with barely-there surface variants */
   --color-background: #000000;
-  --color-surface: #0a0a0a;
-  --color-surface-2: #111111;
-  --color-card: #0f0f0f;
-  --color-card-hover: #161616;
-  --color-gallery-frame: #0f0f0f;
+  --color-surface: #070707;
+  --color-surface-2: #0d0d0d;
+  --color-card: #0a0a0a;
+  --color-card-hover: #121212;
+  --color-gallery-frame: #0a0a0a;
   --color-gallery-black: #000000;
   --color-gallery-white: #ffffff;
 
-  /* Borders */
-  --color-border: #1e1e1e;
-  --color-border-light: #2a2a2a;
-  --color-border-strong: #3d3d3d;
+  /* Borders — fine, deliberate */
+  --color-border: #1c1c1c;
+  --color-border-light: #252525;
+  --color-border-strong: #363636;
 
   /* Text */
   --color-text-primary: #ffffff;
-  --color-text-secondary: #6b6b6b;
-  --color-text-muted: #3d3d3d;
+  --color-text-secondary: #d0d0d0;
+  --color-text-muted: #a0a0a0;
 
-  /* Accent — white only */
-  --color-primary: #ffffff;
-  --color-accent: #ffffff;
-  --color-accent-muted: rgba(255, 255, 255, 0.06);
-  --color-accent-hover: rgba(255, 255, 255, 0.1);
+  /* Accent */
+  --color-primary: #f0f0f0;
+  --color-accent: #f0f0f0;
+  --color-accent-muted: rgba(240, 240, 240, 0.05);
+  --color-accent-hover: rgba(240, 240, 240, 0.08);
 
   /* Functional */
   --color-success: #6b6b6b;
-  --color-error: #e6e6e6;
-  --color-warning: #a0a0a0;
+  --color-error: #c8c8c8;
+  --color-warning: #909090;
 
-  /* Gradients — black to near-black only */
-  --gradient-primary: linear-gradient(135deg, #000000 0%, #111111 100%);
-  --gradient-surface: linear-gradient(135deg, #0a0a0a 0%, #0f0f0f 100%);
+  /* Gradients */
+  --gradient-primary: linear-gradient(180deg, #000000 0%, #070707 100%);
 }
 
-/* Typography Classes */
+/* ─── Typography Scale ─── */
+
+/* Display — editorial headings */
 .text-heading-1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 6vw, 5.5rem);
+  font-weight: 200;
+  line-height: 1.05;
+  letter-spacing: 0.08em;
+  color: var(--color-text-primary);
 }
 
 .text-heading-2 {
-  font-size: 2rem;
-  font-weight: 700;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
+  font-family: var(--font-serif);
+  font-size: clamp(2.25rem, 4vw, 3.75rem);
+  font-weight: 300;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  color: var(--color-text-primary);
 }
 
 .text-heading-3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  line-height: 1.4;
+  font-family: var(--font-serif);
+  font-size: 1.625rem;
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--color-text-primary);
 }
 
+/* Sans — UI and body */
 .text-body {
   font-size: 1rem;
   font-weight: 400;
-  line-height: 1.6;
+  line-height: 1.75;
 }
 
 .text-small {
   font-size: 0.875rem;
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.55;
+}
+
+.text-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 .text-caption {
@@ -148,11 +126,11 @@ body {
   color: var(--color-text-muted);
 }
 
-/* Utility Classes */
+/* ─── Layout ─── */
 .container {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 2rem;
 }
 
 .flex-center {
@@ -173,55 +151,65 @@ body {
   gap: 1.5rem;
 }
 
-/* Animation utilities */
-.transition-smooth {
-  transition: all 0.2s ease-in-out;
-}
+/* ─── Buttons ─── */
 
-.hover-scale:hover {
-  transform: scale(1.02);
-}
-
-/* Buttons */
+/* Primary: white fill → hollow on hover */
 .btn-primary {
-  background: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-text-primary);
   color: #000000;
-  border: 1px solid #ffffff;
-  padding: 0.875rem 2rem;
-  border-radius: 2px;
+  border: 1px solid var(--color-text-primary);
+  padding: 1rem 2.75rem;
+  border-radius: 0;
+  font-family: var(--font-sans);
   font-weight: 600;
-  font-size: 0.875rem;
-  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .btn-primary:hover {
   background: transparent;
-  color: #ffffff;
+  color: var(--color-text-primary);
 }
 
+/* Outline: hollow → slightly brighter border on hover */
 .btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: transparent;
   color: var(--color-text-primary);
   border: 1px solid var(--color-border-strong);
-  padding: 0.875rem 2rem;
-  border-radius: 2px;
+  padding: 1rem 2.75rem;
+  border-radius: 0;
+  font-family: var(--font-sans);
   font-weight: 600;
-  font-size: 0.875rem;
-  letter-spacing: 0.08em;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition:
+    border-color 0.3s ease,
+    color 0.3s ease;
+  text-decoration: none;
+  white-space: nowrap;
 }
 
 .btn-outline:hover {
-  border-color: #ffffff;
-  color: #ffffff;
+  border-color: var(--color-text-primary);
+  color: var(--color-text-primary);
 }
 
-/* Touch action on interactive elements */
+/* ─── Interactions ─── */
 button,
 a,
 input,
@@ -231,18 +219,30 @@ label,
   touch-action: manipulation;
 }
 
-/* Responsive design */
+.transition-smooth {
+  transition: all 0.25s ease;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 1.5rem;
+  }
+}
+
 @media (max-width: 768px) {
   .text-heading-1 {
-    font-size: 2rem;
+    font-size: clamp(1.875rem, 7vw, 2.5rem);
+    letter-spacing: 0.04em;
   }
 
   .text-heading-2 {
-    font-size: 1.5rem;
+    font-size: clamp(1.625rem, 5.5vw, 2.25rem);
+    letter-spacing: 0.03em;
   }
 
   .container {
-    padding: 0 1rem;
+    padding: 0 1.25rem;
   }
 
   .grid-auto {
@@ -250,14 +250,12 @@ label,
     gap: 1rem;
   }
 
-  /* Prevent iOS Safari from zooming on input focus */
   input,
   select,
   textarea {
     font-size: 1rem;
   }
 
-  /* Enforce minimum touch target size */
   button,
   [role='button'] {
     min-height: 44px;

@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 
 const CREATOR_BENEFITS = [
-  'Unlimited Bitcoin Ordinals listings',
+  'Unlimited Digital Collectibles & Digital Art listings',
   'Physical artwork consignment & inventory',
   'On-chain royalty enforcement on every secondary sale',
   'Blockchain certificate of authenticity',
@@ -23,7 +23,7 @@ const COLLECTOR_BENEFITS = [
   'Curated collection feed tailored to your holdings',
   'VIP invitations — gallery events, art fairs, studio visits',
   'Collection portfolio dashboard with provenance tracking',
-  'Bitcoin Ordinals membership card — inscribed on-chain',
+  'Digital Collectibles membership card — inscribed on-chain',
   'Blockchain-verified ownership history for all acquisitions',
   'Off-market access to consigned physical artworks',
   'Priority buyer support & concierge',
@@ -33,9 +33,10 @@ interface PricingProps {
   monthly: number;
   annual: number;
   isAnnual: boolean;
+  paymentNote: string;
 }
 
-function Price({ monthly, annual, isAnnual }: PricingProps) {
+function Price({ monthly, annual, isAnnual, paymentNote }: PricingProps) {
   const displayed = isAnnual ? Math.round(annual / 12) : monthly;
   return (
     <div className="membership-price">
@@ -47,6 +48,7 @@ function Price({ monthly, annual, isAnnual }: PricingProps) {
           billed ${annual}/yr — save ${monthly * 12 - annual}
         </p>
       )}
+      <p className="membership-price-payment">{paymentNote}</p>
     </div>
   );
 }
@@ -65,8 +67,8 @@ export default function MembershipTiers({ showHeadline = true }: MembershipTiers
           <p className="membership-eyebrow">Private Membership</p>
           <h2 className="membership-title">Two tiers. One ecosystem.</h2>
           <p className="membership-subtitle">
-            Built for the creators defining the future of art and the collectors who own it. Bitcoin
-            Ordinals and institutional fine art — in a single platform.
+            Built for the creators defining the future of Digital Art and the collectors who own it.
+            Digital Collectibles and institutional Fine Arts — in a single platform.
           </p>
         </div>
       )}
@@ -83,7 +85,7 @@ export default function MembershipTiers({ showHeadline = true }: MembershipTiers
           onClick={() => setIsAnnual(true)}
         >
           Annual
-          <span className="membership-toggle-save">Save up to $189</span>
+          <span className="membership-toggle-save">Save up to $980</span>
         </button>
       </div>
 
@@ -93,10 +95,10 @@ export default function MembershipTiers({ showHeadline = true }: MembershipTiers
           <div className="membership-card-header">
             <p className="membership-tier-label">For Artists & Galleries</p>
             <h3 className="membership-tier-name">Creator</h3>
-            <Price monthly={49} annual={499} isAnnual={isAnnual} />
+            <Price monthly={49} annual={499} isAnnual={isAnnual} paymentNote="USDC · ETH · BTC" />
             <p className="membership-tier-pitch">
-              List, sell, and earn royalties on Bitcoin Ordinals and physical fine art. Your work.
-              Your rules. Enforced on-chain.
+              List, sell, and earn royalties on Digital Collectibles and physical Fine Arts. Your
+              work. Your rules. Enforced on-chain.
             </p>
           </div>
 
@@ -113,7 +115,7 @@ export default function MembershipTiers({ showHeadline = true }: MembershipTiers
 
           <div className="membership-card-footer">
             <Link href="/membership?tier=creator" className="membership-cta membership-cta-primary">
-              Join as Creator
+              Join as Creator — $49/mo
             </Link>
             <p className="membership-cta-note">No lock-in. Cancel any time.</p>
           </div>
@@ -126,10 +128,10 @@ export default function MembershipTiers({ showHeadline = true }: MembershipTiers
           <div className="membership-card-header">
             <p className="membership-tier-label">For Patrons & Institutions</p>
             <h3 className="membership-tier-name">Collector</h3>
-            <Price monthly={99} annual={999} isAnnual={isAnnual} />
+            <Price monthly={490} annual={4900} isAnnual={isAnnual} paymentNote="USDC · ETH · BTC" />
             <p className="membership-tier-pitch">
-              First access, private sales, and advisory services for collectors who treat art as
-              legacy, not speculation.
+              First access, private sales, and advisory services for collectors who treat Digital
+              Art and Fine Arts as legacy, not speculation.
             </p>
           </div>
 
@@ -149,7 +151,7 @@ export default function MembershipTiers({ showHeadline = true }: MembershipTiers
               href="/membership?tier=collector"
               className="membership-cta membership-cta-inverse"
             >
-              Join as Collector
+              Join as Collector — $490/mo
             </Link>
             <p className="membership-cta-note">No lock-in. Cancel any time.</p>
           </div>

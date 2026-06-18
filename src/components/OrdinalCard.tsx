@@ -3,6 +3,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Ordinal } from '@/types/ordinals';
+import { GatedContent } from '@/components/membership/GatedContent';
 
 interface OrdinalCardProps {
   ordinal: Ordinal;
@@ -83,9 +84,18 @@ export const OrdinalCard: React.FC<OrdinalCardProps> = ({ ordinal, onClick }) =>
         </div>
 
         {ordinal.listed && (
-          <div className="price-display">
-            <span className="price-amount">{formatPrice(ordinal.price, ordinal.priceUnit)}</span>
-          </div>
+          <GatedContent
+            requiredTier="creator"
+            fallback={
+              <div className="price-display price-display-gated">
+                <span className="price-amount price-gated-label">Members only</span>
+              </div>
+            }
+          >
+            <div className="price-display">
+              <span className="price-amount">{formatPrice(ordinal.price, ordinal.priceUnit)}</span>
+            </div>
+          </GatedContent>
         )}
 
         {ordinal.collection && (

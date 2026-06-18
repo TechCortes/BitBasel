@@ -3,11 +3,11 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Physical Works',
   description:
-    'Acquire institutional-grade physical fine art through BitBasel. Provenance-verified works available for private acquisition.',
+    'Acquire institutional-grade physical Fine Arts through BitBasel. Provenance-verified works available for private acquisition.',
   alternates: { canonical: '/artworks' },
   openGraph: {
     title: 'Physical Works — BitBasel',
-    description: 'Provenance-verified physical fine art available for private acquisition.',
+    description: 'Provenance-verified physical Fine Arts available for private acquisition.',
     url: '/artworks',
   },
 };

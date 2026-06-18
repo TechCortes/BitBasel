@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export const Footer: React.FC = () => {
   return (
@@ -9,72 +10,96 @@ export const Footer: React.FC = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-section">
-            <h3>BitBasel</h3>
+            <Image
+              src="/images/logo.png"
+              alt="BitBasel"
+              width={120}
+              height={30}
+              className="footer-logo-img"
+            />
             <p>
-              Your city's institutional-grade marketplace for Bitcoin Ordinals and physical fine
-              art. Discover, collect, and acquire works on the Bitcoin blockchain.
+              A global cultural technology platform connecting art, innovation, and community
+              through live events, digital infrastructure, and real-world activations.
             </p>
             <div className="social-links">
               <a
-                href={process.env.TWITTER_URL || '#'}
+                href="https://www.linkedin.com/company/bitbasel"
                 className="social-link"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                🐦 Twitter
+                LinkedIn
               </a>
               <a
-                href={process.env.DISCORD_URL || '#'}
+                href="https://www.instagram.com/bitbasel"
                 className="social-link"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                💬 Discord
+                Instagram
               </a>
               <a
-                href={process.env.TELEGRAM_URL || '#'}
+                href="https://x.com/bitbasel"
                 className="social-link"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                📱 Telegram
+                X
+              </a>
+              <a
+                href="https://linktr.ee/bitbasel"
+                className="social-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Linktree
               </a>
             </div>
           </div>
 
           <div className="footer-section">
-            <h3>Marketplace</h3>
+            <h3>Events</h3>
             <div className="footer-links">
-              <Link href="/collections" className="footer-link">
-                Featured Collections
+              <Link href="/events" className="footer-link">
+                Annual December Event
               </Link>
-              <Link href="/galleries" className="footer-link">
-                Listed Galleries
+              <Link href="/events#gatherings" className="footer-link">
+                Private Gatherings
               </Link>
-              <Link href="/marketplace" className="footer-link">
-                Browse Ordinals
+              <Link href="/events#roundtables" className="footer-link">
+                Investor Roundtables
               </Link>
-              <Link href="/stats" className="footer-link">
-                Market Stats
+              <Link href="/membership" className="footer-link">
+                Apply for Access
               </Link>
             </div>
           </div>
 
           <div className="footer-section">
-            <h3>Resources</h3>
+            <h3>Platform</h3>
             <div className="footer-links">
-              <Link href="/about" className="footer-link">
-                About Bitcoin Ordinals
+              <Link href="/artists" className="footer-link">
+                Artists
               </Link>
-              <Link href="/guide" className="footer-link">
-                How to Buy
-              </Link>
-              <Link href="/faq" className="footer-link">
-                FAQ
-              </Link>
-              <Link href="/api" className="footer-link">
-                API Documentation
-              </Link>
+              <a
+                href="https://bitbasel.com"
+                className="footer-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                About BitBasel
+              </a>
+              <a href="mailto:info@bitbasel.miami" className="footer-link">
+                Contact
+              </a>
+              <a
+                href="https://bitbasel.miami"
+                className="footer-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                bitbasel.miami
+              </a>
             </div>
           </div>
 
@@ -101,15 +126,33 @@ export const Footer: React.FC = () => {
           <div className="footer-bottom-content">
             <p>&copy; 2026 BitBasel. All rights reserved.</p>
             <div className="footer-bottom-links">
-              <Link href="/privacy" className="footer-link">
+              <a href="mailto:info@bitbasel.miami" className="footer-link">
+                info@bitbasel.miami
+              </a>
+              <a
+                href="https://bitbasel.miami/legals/privacy-policy"
+                className="footer-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Privacy Policy
-              </Link>
-              <Link href="/terms" className="footer-link">
-                Terms of Service
-              </Link>
-              <Link href="/contact" className="footer-link">
+              </a>
+              <a
+                href="https://bitbasel.miami/legals/terms"
+                className="footer-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Terms
+              </a>
+              <a
+                href="https://bitbasel.miami/contact"
+                className="footer-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Contact
-              </Link>
+              </a>
             </div>
           </div>
         </div>

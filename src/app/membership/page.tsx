@@ -1,16 +1,22 @@
 'use client';
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
+import { observer } from 'mobx-react-lite';
+import { useSearchParams } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import MembershipTiers from '@/components/MembershipTiers';
+import { MembershipJoinFlow } from '@/components/membership/MembershipJoinFlow';
+import { useWalletStore } from '@/store/StoreProvider';
+import type { WalletChain } from '@/types/membership';
+import type { TierId } from '@/lib/tiers';
 
 const FEATURE_ROWS = [
   {
     category: 'Listings & Portfolio',
     features: [
-      { name: 'Bitcoin Ordinals listings', creator: 'Unlimited', collector: '—' },
+      { name: 'Digital Collectibles listings', creator: 'Unlimited', collector: '—' },
       { name: 'Physical artwork consignment', creator: '✓', collector: 'View only' },
       { name: 'Platform fee', creator: '2%', collector: '0% on acquisitions' },
       { name: 'Blockchain certificate of authenticity', creator: '✓', collector: '✓' },
@@ -52,13 +58,17 @@ const FEATURE_ROWS = [
     ],
   },
   {
-    category: 'Tools & Analytics',
+    category: 'Digital Tools & Analytics',
     features: [
       { name: 'Creator analytics dashboard', creator: '✓', collector: '—' },
       { name: 'Collection portfolio dashboard', creator: '—', collector: '✓' },
       { name: 'Provenance tracking', creator: '✓', collector: '✓' },
       { name: 'Smart contract exhibition tools', creator: '✓', collector: '—' },
-      { name: 'Bitcoin Ordinals membership card', creator: '—', collector: '✓ inscribed on-chain' },
+      {
+        name: 'Digital Collectibles membership card',
+        creator: '—',
+        collector: '✓ inscribed on-chain',
+      },
     ],
   },
   {
@@ -80,19 +90,23 @@ const HOW_IT_WORKS = [
   {
     step: '02',
     title: 'Connect your wallet',
-    body: 'Link your Bitcoin wallet. Your membership is verified on-chain — no passwords, no intermediaries. Your Ordinals wallet is your identity.',
+    body: 'Link your Bitcoin or Ethereum wallet. Your membership is verified on-chain — no passwords, no intermediaries. Your wallet is your identity.',
   },
   {
     step: '03',
     title: 'Access the ecosystem',
-    body: 'Creators gain listing tools, royalty management, and curator visibility. Collectors unlock early access, advisory services, and VIP events.',
+    body: 'Creators gain Digital Tools, royalty management, and curator visibility. Collectors unlock early access to Digital Art, advisory services, and VIP events.',
   },
 ];
 
 const FAQS = [
   {
     q: 'What wallets are supported?',
-    a: 'BitBasel supports Unisat, Xverse, Leather, Ordinals Wallet, and Phantom. Any wallet that holds Bitcoin Ordinals can be used to verify your membership.',
+    a: 'BitBasel supports Bitcoin wallets (Unisat, Xverse, Leather, Ordinals Wallet, Phantom) and all EVM wallets via MetaMask, WalletConnect, and any EIP-6963 compatible wallet.',
+  },
+  {
+    q: 'What payment methods are accepted?',
+    a: 'Memberships are payable in USDC, ETH, or BTC. Payment is processed through Luma. Your wallet is automatically verified once payment clears.',
   },
   {
     q: 'Can I switch between Creator and Collector?',
@@ -100,11 +114,11 @@ const FAQS = [
   },
   {
     q: 'How is my membership stored on-chain?',
-    a: 'Collector membership cards are inscribed as Bitcoin Ordinals — permanently on the Bitcoin blockchain. Creator memberships are verified via signed wallet authentication.',
+    a: 'Collector membership cards are inscribed as Digital Collectibles — permanently on the blockchain. Creator memberships are verified via signed wallet authentication.',
   },
   {
     q: 'Is there a free tier?',
-    a: 'The public gallery is accessible to anyone without a membership. Private sales, early access, and advisory services require a paid tier.',
+    a: 'The public gallery is accessible to anyone without a membership. Private sales, early access to Digital Art drops, and advisory services require a paid tier.',
   },
   {
     q: 'What is the cancellation policy?',
@@ -115,6 +129,49 @@ const FAQS = [
     a: 'Yes. Gallery and institutional partners can apply for a custom enterprise tier that includes white-label options, API access, and dedicated support. Contact us to inquire.',
   },
 ];
+
+function evmChain(chainId: number | undefined): WalletChain {
+  switch (chainId) {
+    case 137:
+      return 'polygon';
+    case 8453:
+      return 'base';
+    case 42161:
+      return 'arbitrum';
+    case 10:
+      return 'optimism';
+    default:
+      return 'ethereum';
+  }
+}
+
+const JoinFlowSection = observer(function JoinFlowSection() {
+  const walletStore = useWalletStore();
+  const searchParams = useSearchParams();
+  const defaultTier = (searchParams.get('tier') as TierId | null) ?? 'creator';
+
+  const btcAddress = walletStore.walletInfo?.address ?? null;
+  const evmAddress = walletStore.evmWalletInfo?.address ?? null;
+  const walletAddress = btcAddress ?? evmAddress;
+
+  const chain: WalletChain = btcAddress ? 'bitcoin' : evmChain(walletStore.evmWalletInfo?.chainId);
+
+  if (!walletAddress) {
+    return (
+      <div className="membership-join-prompt">
+        <p className="membership-join-prompt-text">
+          Connect your wallet above to join. Accepted: USDC · ETH · BTC
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="membership-join-flow-wrapper">
+      <MembershipJoinFlow walletAddress={walletAddress} chain={chain} defaultTier={defaultTier} />
+    </div>
+  );
+});
 
 export default function MembershipPage() {
   return (
@@ -127,16 +184,16 @@ export default function MembershipPage() {
           <div className="container">
             <p className="membership-eyebrow">BitBasel Private Membership</p>
             <h1 className="membership-page-title">
-              The future of art and
+              The future of Digital Art
               <br />
-              Web3 belongs to those
+              and Fine Arts belongs
               <br />
-              who own it.
+              to those who own it.
             </h1>
             <p className="membership-page-lead">
-              Two tiers. One ecosystem. Built for creators defining the next generation of fine art
-              and the collectors who acquire it — across Bitcoin Ordinals and institutional physical
-              works.
+              Two tiers. One ecosystem. Built for creators defining the next generation of Digital
+              Art and the collectors who acquire it — across Digital Collectibles and institutional
+              physical works.
             </p>
           </div>
         </section>
@@ -145,6 +202,16 @@ export default function MembershipPage() {
         <div className="container">
           <MembershipTiers showHeadline={false} />
         </div>
+
+        {/* Join Flow */}
+        <section className="membership-join-section">
+          <div className="container">
+            <h2 className="membership-matrix-title">Join now</h2>
+            <Suspense fallback={<div className="gated-loading" aria-busy="true" />}>
+              <JoinFlowSection />
+            </Suspense>
+          </div>
+        </section>
 
         {/* Feature Matrix */}
         <section className="membership-matrix-section">
@@ -159,7 +226,7 @@ export default function MembershipPage() {
                 </div>
                 <div className="membership-matrix-tier-col membership-matrix-tier-col-featured">
                   <span>Collector</span>
-                  <span className="membership-matrix-price-tag">$99/mo</span>
+                  <span className="membership-matrix-price-tag">$490/mo</span>
                 </div>
               </div>
 
@@ -217,19 +284,19 @@ export default function MembershipPage() {
           <div className="container">
             <h2 className="membership-final-title">Ready to join?</h2>
             <p className="membership-final-body">
-              Connect your wallet and choose your membership. The intersection of Bitcoin Ordinals
-              and fine art is open — for those who are serious about ownership.
+              Connect your wallet and choose your membership. The intersection of Digital Art and
+              Fine Arts is open — for those who are serious about ownership.
             </p>
             <div className="membership-final-actions">
               <Link href="/membership?tier=creator" className="btn-primary">
                 Join as Creator — $49/mo
               </Link>
               <Link href="/membership?tier=collector" className="btn-outline">
-                Join as Collector — $99/mo
+                Join as Collector — $490/mo
               </Link>
             </div>
             <p className="membership-final-note">
-              Annual plans available. No lock-in. Cancel any time.
+              Annual plans available · USDC · ETH · BTC · No lock-in · Cancel any time.
             </p>
           </div>
         </section>

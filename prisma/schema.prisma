@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Member {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String
+  tier        String   // 'creator' | 'collector'
+  billing     String   // 'monthly' | 'annual'
+  status      String   @default("pending") // 'pending' | 'active' | 'cancelled' | 'expired'
+  lumaGuestId String?  // lu.ma guest API ID once Luma confirms payment
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  walletLinks WalletLumaLink[]
+  attendance  EventAttendance[]
+
+  @@index([status])
+}
+
+model WalletLumaLink {
+  id        String   @id @default(cuid())
+  memberId  String
+  member    Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  address   String   @unique // Bitcoin or EVM address (lowercased for EVM)
+  chain     String   // 'bitcoin' | 'ethereum' | 'polygon' | 'base' | 'arbitrum'
+  createdAt DateTime @default(now())
+
+  @@index([address])
+  @@index([memberId])
+}
+
+model EventAttendance {
+  id           String   @id @default(cuid())
+  memberId     String
+  member       Member   @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  lumaEventId  String
+  status       String   @default("registered") // 'registered' | 'attended' | 'cancelled'
+  registeredAt DateTime @default(now())
+
+  @@unique([memberId, lumaEventId])
+  @@index([lumaEventId])
+}

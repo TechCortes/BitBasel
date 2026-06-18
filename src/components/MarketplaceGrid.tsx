@@ -169,7 +169,7 @@ export const MarketplaceGrid: React.FC<MarketplaceGridProps> = observer(
         {!featured && (
           <div className="section-header">
             <h2 className="text-heading-2">
-              {type === 'ordinals' ? 'Bitcoin Ordinals' : 'Collections'}
+              {type === 'ordinals' ? 'Digital Collectibles' : 'Collections'}
             </h2>
             <div className="section-stats">
               <span className="stat">
