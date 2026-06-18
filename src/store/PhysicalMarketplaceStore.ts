@@ -143,7 +143,7 @@ export class PhysicalMarketplaceStore {
     this.selectedArtistId = id;
   }
 
-  async submitInquiry(inquiry: ArtworkInquiry) {
+  async submitInquiry(_inquiry: ArtworkInquiry) {
     runInAction(() => {
       this.inquirySubmitting = true;
       this.inquiryError = null;

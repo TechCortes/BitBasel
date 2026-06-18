@@ -120,7 +120,7 @@ export class WalletStore {
           return;
         }
 
-        const { provider, address, timestamp } = parsed;
+        const { provider, timestamp } = parsed;
 
         // Check if connection is expired (24 hours)
         const now = Date.now();
