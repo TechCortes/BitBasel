@@ -60,7 +60,7 @@ const HomePage: React.FC = observer(() => {
                 <span className="annual-stat-label">Days</span>
               </div>
               <div className="annual-stat">
-                <span className="annual-stat-number">Week&nbsp;1</span>
+                <span className="annual-stat-number">1st Week</span>
                 <span className="annual-stat-label">of December</span>
               </div>
               <div className="annual-stat">
