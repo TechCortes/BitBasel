@@ -121,7 +121,7 @@ const FAQS = [
   },
   {
     q: 'What is the cancellation policy?',
-    a: 'Cancel any time. Monthly members retain access until the end of their billing period. Annual members are not eligible for mid-period refunds but can cancel renewal.',
+    a: 'Monthly members can cancel any time and retain access until the end of their billing period. Annual members can cancel renewal at any time but are not eligible for mid-period refunds.',
   },
   {
     q: 'Are there institutional or gallery-level tiers?',
@@ -278,8 +278,7 @@ export default function MembershipPage() {
               </Link>
             </div>
             <p className="membership-final-note">
-              Creator billed monthly · Collector billed annually · USDC · ETH · BTC · Cancel any
-              time.
+              Creator billed monthly · Collector billed annually · USDC · ETH · BTC
             </p>
           </div>
         </section>

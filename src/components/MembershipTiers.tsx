@@ -121,7 +121,7 @@ export default function MembershipTiers({ showHeadline = true }: MembershipTiers
             >
               Join as Collector — $490/yr
             </Link>
-            <p className="membership-cta-note">Billed annually. Cancel any time.</p>
+            <p className="membership-cta-note">Billed annually. Cancel renewal any time.</p>
           </div>
         </article>
       </div>
