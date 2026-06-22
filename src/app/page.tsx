@@ -1,11 +1,67 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { observer } from 'mobx-react-lite';
 import Link from 'next/link';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import MembershipTiers from '@/components/MembershipTiers';
+
+type InviteStatus = 'idle' | 'loading' | 'success' | 'error';
+
+function GetInviteForm() {
+  const [email, setEmail] = useState('');
+  const [status, setStatus] = useState<InviteStatus>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setStatus('loading');
+    setErrorMessage('');
+
+    try {
+      const res = await fetch('/api/luma/join', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, name: email, tier_key: 'community' }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setStatus('error');
+        setErrorMessage(data.error ?? 'Something went wrong. Please try again.');
+      } else {
+        setStatus('success');
+      }
+    } catch {
+      setStatus('error');
+      setErrorMessage('Network error. Please check your connection and try again.');
+    }
+  };
+
+  if (status === 'success') {
+    return <p className="newsletter-success">You&apos;re on the list. Check your email.</p>;
+  }
+
+  return (
+    <form className="newsletter-form" onSubmit={handleSubmit}>
+      <input
+        type="email"
+        placeholder="Enter your email"
+        className="newsletter-input"
+        required
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        disabled={status === 'loading'}
+      />
+      <button type="submit" className="btn-primary" disabled={status === 'loading'}>
+        {status === 'loading' ? 'Requesting...' : 'Request Access'}
+      </button>
+      {status === 'error' && <p className="newsletter-error">{errorMessage}</p>}
+    </form>
+  );
+}
 
 const HomePage: React.FC = observer(() => {
   return (
@@ -229,17 +285,7 @@ const HomePage: React.FC = observer(() => {
                 Private event notices, early access invitations, and member-only announcements —
                 before the public.
               </p>
-              <form className="newsletter-form">
-                <input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="newsletter-input"
-                  required
-                />
-                <button type="submit" className="btn-primary">
-                  Request Access
-                </button>
-              </form>
+              <GetInviteForm />
             </div>
           </div>
         </section>

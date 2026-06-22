@@ -1638,6 +1638,21 @@
   border-color: var(--color-text-primary);
 }
 
+.newsletter-success {
+  margin-top: 1rem;
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.newsletter-error {
+  margin-top: 0.5rem;
+  width: 100%;
+  color: #e53e3e;
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
 /* Navigation Enhancements */
 .wallet-section {
   margin-left: 1rem;
