@@ -208,7 +208,7 @@ export default function MembershipPage() {
                 </div>
                 <div className="membership-matrix-tier-col membership-matrix-tier-col-featured">
                   <span>Collector</span>
-                  <span className="membership-matrix-price-tag">$490/mo</span>
+                  <span className="membership-matrix-price-tag">$490/yr</span>
                 </div>
               </div>
 
@@ -274,11 +274,12 @@ export default function MembershipPage() {
                 Join as Creator — $49/mo
               </Link>
               <Link href="/membership?tier=collector" className="btn-outline">
-                Join as Collector — $490/mo
+                Join as Collector — $490/yr
               </Link>
             </div>
             <p className="membership-final-note">
-              Annual plans available · USDC · ETH · BTC · No lock-in · Cancel any time.
+              Creator billed monthly · Collector billed annually · USDC · ETH · BTC · Cancel any
+              time.
             </p>
           </div>
         </section>

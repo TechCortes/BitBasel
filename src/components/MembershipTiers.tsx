@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 
 const CREATOR_BENEFITS = [
@@ -29,37 +29,11 @@ const COLLECTOR_BENEFITS = [
   'Priority buyer support & concierge',
 ];
 
-interface PricingProps {
-  monthly: number;
-  annual: number;
-  isAnnual: boolean;
-  paymentNote: string;
-}
-
-function Price({ monthly, annual, isAnnual, paymentNote }: PricingProps) {
-  const displayed = isAnnual ? Math.round(annual / 12) : monthly;
-  return (
-    <div className="membership-price">
-      <span className="membership-price-currency">$</span>
-      <span className="membership-price-amount">{displayed}</span>
-      <span className="membership-price-period">/mo</span>
-      {isAnnual && (
-        <p className="membership-price-billed">
-          billed ${annual}/yr — save ${monthly * 12 - annual}
-        </p>
-      )}
-      <p className="membership-price-payment">{paymentNote}</p>
-    </div>
-  );
-}
-
 interface MembershipTiersProps {
   showHeadline?: boolean;
 }
 
 export default function MembershipTiers({ showHeadline = true }: MembershipTiersProps) {
-  const [isAnnual, setIsAnnual] = useState(false);
-
   return (
     <section className="membership-section">
       {showHeadline && (
@@ -73,29 +47,18 @@ export default function MembershipTiers({ showHeadline = true }: MembershipTiers
         </div>
       )}
 
-      <div className="membership-toggle-row">
-        <button
-          className={`membership-toggle-btn${!isAnnual ? ' active' : ''}`}
-          onClick={() => setIsAnnual(false)}
-        >
-          Monthly
-        </button>
-        <button
-          className={`membership-toggle-btn${isAnnual ? ' active' : ''}`}
-          onClick={() => setIsAnnual(true)}
-        >
-          Annual
-          <span className="membership-toggle-save">Save up to $980</span>
-        </button>
-      </div>
-
       <div className="membership-grid">
         {/* Creator Tier */}
         <article className="membership-card">
           <div className="membership-card-header">
             <p className="membership-tier-label">For Artists & Galleries</p>
             <h3 className="membership-tier-name">Creator</h3>
-            <Price monthly={49} annual={499} isAnnual={isAnnual} paymentNote="USDC · ETH · BTC" />
+            <div className="membership-price">
+              <span className="membership-price-currency">$</span>
+              <span className="membership-price-amount">49</span>
+              <span className="membership-price-period">/mo</span>
+              <p className="membership-price-payment">USDC · ETH · BTC</p>
+            </div>
             <p className="membership-tier-pitch">
               List, sell, and earn royalties on Digital Collectibles and physical Fine Arts. Your
               work. Your rules. Enforced on-chain.
@@ -117,7 +80,7 @@ export default function MembershipTiers({ showHeadline = true }: MembershipTiers
             <Link href="/membership?tier=creator" className="membership-cta membership-cta-primary">
               Join as Creator — $49/mo
             </Link>
-            <p className="membership-cta-note">No lock-in. Cancel any time.</p>
+            <p className="membership-cta-note">Billed monthly. Cancel any time.</p>
           </div>
         </article>
 
@@ -128,7 +91,12 @@ export default function MembershipTiers({ showHeadline = true }: MembershipTiers
           <div className="membership-card-header">
             <p className="membership-tier-label">For Patrons & Institutions</p>
             <h3 className="membership-tier-name">Collector</h3>
-            <Price monthly={490} annual={4900} isAnnual={isAnnual} paymentNote="USDC · ETH · BTC" />
+            <div className="membership-price">
+              <span className="membership-price-currency">$</span>
+              <span className="membership-price-amount">490</span>
+              <span className="membership-price-period">/yr</span>
+              <p className="membership-price-payment">USDC · ETH · BTC</p>
+            </div>
             <p className="membership-tier-pitch">
               First access, private sales, and advisory services for collectors who treat Digital
               Art and Fine Arts as legacy, not speculation.
@@ -151,16 +119,16 @@ export default function MembershipTiers({ showHeadline = true }: MembershipTiers
               href="/membership?tier=collector"
               className="membership-cta membership-cta-inverse"
             >
-              Join as Collector — $490/mo
+              Join as Collector — $490/yr
             </Link>
-            <p className="membership-cta-note">No lock-in. Cancel any time.</p>
+            <p className="membership-cta-note">Billed annually. Cancel any time.</p>
           </div>
         </article>
       </div>
 
       <p className="membership-enterprise-note">
         Representing a gallery or institution?{' '}
-        <Link href="/membership?tier=enterprise" className="membership-enterprise-link">
+        <Link href="/membership" className="membership-enterprise-link">
           Inquire about enterprise access →
         </Link>
       </p>

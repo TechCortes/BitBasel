@@ -133,7 +133,7 @@ export default function OGImage() {
                   fontFamily: 'sans-serif',
                 }}
               >
-                $99/mo
+                $490/yr
               </span>
             </div>
           </div>
