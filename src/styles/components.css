@@ -2348,24 +2348,29 @@
   }
 
   .annual-stats {
-    flex-direction: column;
-    border-top: none;
-    border-bottom: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
     gap: 0;
   }
 
   .annual-stat {
-    border-right: none;
+    border-right: 1px solid var(--color-border);
     border-bottom: 1px solid var(--color-border);
-    padding: 1.75rem 0;
+    padding: 2rem 1.25rem;
   }
 
-  .annual-stat:last-child {
+  .annual-stat:nth-child(even) {
+    border-right: none;
+  }
+
+  .annual-stat:nth-last-child(-n + 2) {
     border-bottom: none;
   }
 
   .annual-stat-number {
-    font-size: 3rem;
+    font-size: 2.5rem;
   }
 
   .irl-section,
@@ -2474,11 +2479,11 @@
   }
 
   .hero {
-    padding: 6rem 0 4rem;
-    min-height: 100svh;
+    padding: 5rem 0 3.5rem;
+    min-height: 90svh;
     text-align: center;
     align-items: flex-start;
-    padding-top: 8rem;
+    padding-top: 5.5rem;
   }
 
   .hero-scroll {
@@ -2690,6 +2695,34 @@
     min-height: 44px;
     padding: 0.75rem 1.25rem;
   }
+
+  /* Section subtitle — left-align on mobile to match headings */
+  .section-subtitle {
+    text-align: left;
+    max-width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* Newsletter form — full-width stack */
+  .newsletter-input {
+    width: 100%;
+  }
+
+  .newsletter-form .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* IRL section — tighter padding on mobile */
+  .irl-section {
+    padding: 4rem 0;
+  }
+
+  /* Credentials — tighter section spacing */
+  .credentials-section {
+    padding: 3.5rem 0;
+  }
 }
 
 /* iPhone SE and sub-375px: prevent hero button wrap */
@@ -2713,7 +2746,9 @@
   }
 
   .hero {
-    padding: 6rem 0 4rem;
+    padding: 4.5rem 0 3rem;
+    padding-top: 4.5rem;
+    min-height: 85svh;
   }
 
   .hero-title {
@@ -2733,7 +2768,15 @@
   }
 
   .annual-section {
-    padding: 4rem 0;
+    padding: 3.5rem 0;
+  }
+
+  .annual-stat {
+    padding: 1.5rem 0.75rem;
+  }
+
+  .annual-stat-number {
+    font-size: 2rem;
   }
 
   .annual-title {
