@@ -33,14 +33,19 @@ export const Navigation: React.FC = observer(() => {
               <Link href="/membership" className="nav-link nav-link-membership">
                 Membership
               </Link>
-              <Link href="/events" className="nav-link">
+              <a
+                href="https://www.bitbasel.miami"
+                className="nav-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Events
-              </Link>
+              </a>
               <Link href="/artists" className="nav-link">
                 Artists
               </Link>
               <a
-                href="https://bitbasel.com"
+                href="https://www.bitbasel.miami"
                 className="nav-link"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -76,14 +81,19 @@ export const Navigation: React.FC = observer(() => {
               <Link href="/membership" className="nav-link mobile-link nav-link-membership">
                 Membership
               </Link>
-              <Link href="/events" className="nav-link mobile-link">
+              <a
+                href="https://www.bitbasel.miami"
+                className="nav-link mobile-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Events
-              </Link>
+              </a>
               <Link href="/artists" className="nav-link mobile-link">
                 Artists
               </Link>
               <a
-                href="https://bitbasel.com"
+                href="https://www.bitbasel.miami"
                 className="nav-link mobile-link"
                 target="_blank"
                 rel="noopener noreferrer"

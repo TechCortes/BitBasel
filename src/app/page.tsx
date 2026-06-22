@@ -31,12 +31,36 @@ const HomePage: React.FC = observer(() => {
                 Join as Creator&nbsp;&mdash;&nbsp;$49/mo
               </Link>
               <Link href="/membership?tier=collector" className="btn-outline hero-btn">
-                Join as Collector&nbsp;&mdash;&nbsp;$490/mo
+                Join as Collector&nbsp;&mdash;&nbsp;$490/yr
               </Link>
             </div>
           </div>
           <div className="hero-scroll">
             <span className="hero-scroll-line" />
+          </div>
+        </section>
+
+        {/* Authority Strip */}
+        <section className="authority-strip">
+          <div className="container">
+            <div className="authority-strip-grid">
+              <div className="authority-item">
+                <span className="authority-value">Est. 2020</span>
+                <span className="authority-label">Founded in Miami</span>
+              </div>
+              <div className="authority-item">
+                <span className="authority-value">6.5 Years</span>
+                <span className="authority-label">Blockchain for the Arts</span>
+              </div>
+              <div className="authority-item">
+                <span className="authority-value">Millions</span>
+                <span className="authority-label">Artists Onboarded</span>
+              </div>
+              <div className="authority-item">
+                <span className="authority-value">Art · Tech · Web3</span>
+                <span className="authority-label">The Intersection</span>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -143,6 +167,47 @@ const HomePage: React.FC = observer(() => {
                 <p className="who-card-body">
                   Museum directors, curators, brand executives, and media shaping the future of art.
                 </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Authority & Credentials */}
+        <section className="credentials-section">
+          <div className="container">
+            <div className="credentials-grid">
+              <div>
+                <p className="credentials-label">About BitBasel</p>
+                <p className="credentials-statement">
+                  The leading authority at the intersection of Art, Technology, and Web3 — for over
+                  six years, trusted by millions of artists and creative industries worldwide.
+                </p>
+              </div>
+              <div className="credentials-list">
+                <div className="credential-item">
+                  <p className="credential-title">Est. 2020 — Born in Miami</p>
+                  <p className="credential-body">
+                    Founded at the convergence of Art Basel and the emergence of Bitcoin culture.
+                    BitBasel pioneered the integration of blockchain infrastructure into the
+                    creative industries before it became a movement.
+                  </p>
+                </div>
+                <div className="credential-item">
+                  <p className="credential-title">6.5 Years of Blockchain Expertise</p>
+                  <p className="credential-body">
+                    A proven track record advising artists, galleries, institutions, and creative
+                    enterprises on adopting Web3 — building the infrastructure of cultural ownership
+                    long before it was mainstream.
+                  </p>
+                </div>
+                <div className="credential-item">
+                  <p className="credential-title">Millions of Artists Onboarded</p>
+                  <p className="credential-body">
+                    The most trusted platform for introducing the creative industries to digital
+                    ownership, on-chain provenance, and the future of cultural capital. Artists,
+                    studios, and institutions rely on BitBasel as their bridge to Web3.
+                  </p>
+                </div>
               </div>
             </div>
           </div>

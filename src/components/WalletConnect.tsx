@@ -169,7 +169,7 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
     <div className="wallet-modal-overlay" onClick={onClose}>
       <div className="wallet-modal" onClick={(e) => e.stopPropagation()}>
         <div className="wallet-modal-header">
-          <h2 className="text-heading-2">Connect Wallet</h2>
+          <span className="wallet-modal-title">Connect Wallet</span>
           <button className="close-btn" onClick={onClose}>
             ×
           </button>

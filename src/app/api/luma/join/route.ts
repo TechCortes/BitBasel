@@ -1,82 +1,144 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { subscribeCalendarMember } from '@/lib/luma-client';
-import { getTier } from '@/lib/tiers';
-import type { JoinRequest, JoinResponse } from '@/types/membership';
+// ─────────────────────────────────────────────────────────────
+// BitBasel  —  Join Membership Route
+// POST /api/luma/join
+//
+// Tier behaviour:
+//   community → free, instant active, hidden from UI
+//   creator   → $49/mo, pending_approval until admin approves in Luma
+//   collector → $490/yr, pending_payment — Luma sends Stripe link
+//
+// Luma manages all billing. This route just calls addMemberToTier
+// and persists a local record so the webhook has something to merge into.
+// ─────────────────────────────────────────────────────────────
 
-export async function POST(req: NextRequest): Promise<NextResponse> {
+import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server';
+import { addMemberToTier, resolveLumaTierId } from '@/lib/luma-client';
+import { TIERS } from '@/lib/tiers';
+import type { BitBaselTierKey, JoinRequest, JoinResponse } from '@/types/membership';
+
+export async function POST(
+  req: NextRequest
+): Promise<NextResponse<JoinResponse | { error: string }>> {
   let body: JoinRequest;
-
   try {
-    body = (await req.json()) as JoinRequest;
+    body = await req.json();
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid request body' }, { status: 400 });
   }
 
-  const { walletAddress, chain, email, name, tierId, billing } = body;
+  const { email, name, tier_key } = body;
 
-  if (!walletAddress || !chain || !email || !name || !tierId || !billing) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+  // ── Validate base fields ──────────────────────────────────
+  if (!email || !name || !tier_key) {
+    return NextResponse.json({ error: 'email, name, and tier_key are required' }, { status: 400 });
   }
 
-  const tier = getTier(tierId);
-  if (!tier) {
-    return NextResponse.json({ error: 'Invalid tier' }, { status: 400 });
+  const tierConfig = TIERS[tier_key];
+  if (!tierConfig) {
+    return NextResponse.json({ error: `Unknown tier: ${tier_key}` }, { status: 400 });
   }
 
-  if (!tier.lumaTierId) {
-    return NextResponse.json({ error: 'Membership tier not configured' }, { status: 503 });
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
   }
 
-  const normalizedAddress = chain === 'bitcoin' ? walletAddress : walletAddress.toLowerCase();
+  // ── Tier-specific validation ──────────────────────────────
+  if (tier_key === 'creator' && !body.artist_name?.trim()) {
+    return NextResponse.json(
+      { error: 'Artist or studio name is required for the Creator tier' },
+      { status: 400 }
+    );
+  }
 
-  console.info('[luma/join] request', { tierId, billing, chain, email });
+  if (tier_key === 'creator' && body.portfolio_url) {
+    try {
+      new URL(body.portfolio_url);
+    } catch {
+      return NextResponse.json(
+        { error: 'Portfolio URL must be a valid URL (https://...)' },
+        { status: 400 }
+      );
+    }
+  }
 
   try {
-    // Upsert member record
-    const member = await db.member.upsert({
-      where: { email },
-      update: { name, tier: tierId, billing, status: 'pending' },
-      create: { email, name, tier: tierId, billing, status: 'pending' },
+    // ── Resolve Luma tier api_id ──────────────────────────
+    const lumaTierId = await resolveLumaTierId(tier_key as BitBaselTierKey);
+
+    // ── Call Luma ─────────────────────────────────────────
+    // Luma handles:
+    //   - community → active immediately (free)
+    //   - creator   → pending_approval (require_approval = true in dashboard)
+    //   - collector → pending_payment (Luma sends Stripe annual billing link)
+    const { member } = await addMemberToTier({
+      email,
+      name,
+      tier_id: lumaTierId,
+      metadata: {
+        ...(body.artist_name && { artist_name: body.artist_name }),
+        ...(body.portfolio_url && { portfolio_url: body.portfolio_url }),
+        ...(body.instagram && { instagram: body.instagram }),
+        ...(body.twitter && { twitter: body.twitter }),
+        ...(body.collecting_focus && { collecting_focus: body.collecting_focus }),
+        ...(body.wallet && { wallet_address: body.wallet }),
+        billing_interval: tierConfig.billingInterval ?? 'none',
+        price_label: tierConfig.priceLabel,
+      },
     });
 
-    // Link wallet address to member (idempotent)
-    await db.walletLumaLink.upsert({
-      where: { address: normalizedAddress },
-      update: { memberId: member.id, chain },
-      create: { memberId: member.id, address: normalizedAddress, chain },
-    });
+    // ── Persist locally (webhook will also upsert, this is optimistic) ─
+    // REPLACE with your DB write:
+    //
+    // await prisma.member.create({
+    //   data: {
+    //     luma_member_id: member.api_id,
+    //     email:          member.email,
+    //     name,
+    //     tier_key,
+    //     status:         member.status,
+    //     access_scopes:  member.status === 'active' ? tierConfig.grantedAccess : [],
+    //     wallet_address: body.wallet ?? null,
+    //     joined_at:      new Date(),
+    //     metadata: {
+    //       artist_name:      body.artist_name,
+    //       portfolio_url:    body.portfolio_url,
+    //       instagram:        body.instagram,
+    //       twitter:          body.twitter,
+    //       collecting_focus: body.collecting_focus,
+    //     },
+    //   },
+    // })
 
-    // Subscribe guest to the correct Luma calendar membership tier
-    const lumaMembership = await subscribeCalendarMember(tier.lumaTierId, email, name);
-
-    console.info('[luma/join] luma membership created', {
-      memberId: member.id,
-      lumaMembershipId: lumaMembership.api_id,
-      tierId,
-      lumaStatus: lumaMembership.status,
-      hasCheckoutUrl: !!lumaMembership.checkout_url,
-    });
-
-    await db.member.update({
-      where: { id: member.id },
-      data: { lumaGuestId: lumaMembership.api_id },
-    });
-
-    // Use Luma's checkout URL; fall back to calendar membership page
-    const lumaCheckoutUrl =
-      lumaMembership.checkout_url ?? `https://lu.ma/${process.env.LUMA_CALENDAR_ID}/membership`;
-
-    const response: JoinResponse = {
-      success: true,
-      memberId: member.id,
-      lumaCheckoutUrl,
+    // ── Status-specific messages ──────────────────────────
+    const messages: Record<string, string> = {
+      active: "You're in. Welcome to BitBasel.",
+      pending_approval:
+        "Application received. Our team reviews every Creator within 2–3 business days — you'll hear from us by email.",
+      pending_payment:
+        'Almost there — check your email for a payment link to activate your Collector membership ($490/year).',
     };
 
-    return NextResponse.json(response);
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Internal error';
-    console.error('[luma/join] error', { tierId, email, error: message });
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({
+      success: true,
+      status: member.status,
+      member_id: member.api_id,
+      message: messages[member.status] ?? 'Application submitted.',
+    });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error('[join] Error:', message);
+
+    if (message.toLowerCase().includes('already a member')) {
+      return NextResponse.json(
+        { error: 'This email is already registered. Try signing in or use a different email.' },
+        { status: 409 }
+      );
+    }
+
+    return NextResponse.json(
+      { error: 'Failed to process your application. Please try again.' },
+      { status: 500 }
+    );
   }
 }

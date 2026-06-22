@@ -30,8 +30,10 @@ function formatTime(iso: string): string {
 }
 
 function EventCard({ event }: { event: LumaEvent }) {
-  const free = event.ticket_info?.is_free;
-  const spotsLeft = event.ticket_info?.spots_remaining;
+  const free = event.ticket_types.some((t) => t.price_cents === 0);
+  const totalCapacity = event.ticket_types.reduce((s, t) => s + (t.capacity ?? 0), 0);
+  const totalSold = event.ticket_types.reduce((s, t) => s + t.sold_count, 0);
+  const spotsLeft = totalCapacity > 0 ? totalCapacity - totalSold : null;
 
   return (
     <a
@@ -55,8 +57,8 @@ function EventCard({ event }: { event: LumaEvent }) {
 
         <h2 className="exhibition-name">{event.name}</h2>
 
-        {event.geo_address_info?.full_address && (
-          <p className="exhibition-location">{event.geo_address_info.full_address}</p>
+        {event.geo_address_json?.full_address && (
+          <p className="exhibition-location">{event.geo_address_json.full_address}</p>
         )}
 
         {event.description && (

@@ -7,10 +7,9 @@ import { useSearchParams } from 'next/navigation';
 import Navigation from '@/components/Navigation';
 import Footer from '@/components/Footer';
 import MembershipTiers from '@/components/MembershipTiers';
-import { MembershipJoinFlow } from '@/components/membership/MembershipJoinFlow';
+import MembershipJoinFlow from '@/components/membership/MembershipJoinFlow';
 import { useWalletStore } from '@/store/StoreProvider';
-import type { WalletChain } from '@/types/membership';
-import type { TierId } from '@/lib/tiers';
+import type { BitBaselTierKey } from '@/types/membership';
 
 const FEATURE_ROWS = [
   {
@@ -126,35 +125,18 @@ const FAQS = [
   },
   {
     q: 'Are there institutional or gallery-level tiers?',
-    a: 'Yes. Gallery and institutional partners can apply for a custom enterprise tier that includes white-label options, API access, and dedicated support. Contact us to inquire.',
+    a: 'Yes. Gallery and institutional partners can apply for a custom enterprise tier that includes white-label options, API access, and dedicated support. Email jorge@bitbasel.miami to inquire.',
   },
 ];
-
-function evmChain(chainId: number | undefined): WalletChain {
-  switch (chainId) {
-    case 137:
-      return 'polygon';
-    case 8453:
-      return 'base';
-    case 42161:
-      return 'arbitrum';
-    case 10:
-      return 'optimism';
-    default:
-      return 'ethereum';
-  }
-}
 
 const JoinFlowSection = observer(function JoinFlowSection() {
   const walletStore = useWalletStore();
   const searchParams = useSearchParams();
-  const defaultTier = (searchParams.get('tier') as TierId | null) ?? 'creator';
+  const defaultTier = (searchParams.get('tier') as BitBaselTierKey | null) ?? 'creator';
 
   const btcAddress = walletStore.walletInfo?.address ?? null;
   const evmAddress = walletStore.evmWalletInfo?.address ?? null;
   const walletAddress = btcAddress ?? evmAddress;
-
-  const chain: WalletChain = btcAddress ? 'bitcoin' : evmChain(walletStore.evmWalletInfo?.chainId);
 
   if (!walletAddress) {
     return (
@@ -168,7 +150,7 @@ const JoinFlowSection = observer(function JoinFlowSection() {
 
   return (
     <div className="membership-join-flow-wrapper">
-      <MembershipJoinFlow walletAddress={walletAddress} chain={chain} defaultTier={defaultTier} />
+      <MembershipJoinFlow walletAddress={walletAddress} defaultTier={defaultTier} />
     </div>
   );
 });

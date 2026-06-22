@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     template: '%s — BitBasel',
   },
   description:
-    'BitBasel is a global cultural technology platform connecting art, innovation, and community through live events, digital infrastructure, and on-chain cultural assets. Creator $49/mo · Collector $490/mo.',
+    'BitBasel is a global cultural technology platform connecting art, innovation, and community through live events, digital infrastructure, and on-chain cultural assets. Creator $49/mo · Collector $490/yr.',
   keywords: [
     'Digital Collectibles',
     'Digital Art',
@@ -70,14 +70,14 @@ export const metadata: Metadata = {
     url: '/',
     title: 'BitBasel — Built for the Future of Art Culture',
     description:
-      'A global cultural technology platform for artists, collectors, founders, and cultural leaders. Creator $49/mo · Collector $490/mo. USDC · ETH · BTC.',
+      'A global cultural technology platform for artists, collectors, founders, and cultural leaders. Creator $49/mo · Collector $490/yr. USDC · ETH · BTC.',
     siteName: 'BitBasel',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'BitBasel — Private Membership for Art and Web3',
     description:
-      'BitBasel — Built for the Future of Art Culture. Global platform for artists, collectors, founders, and cultural leaders. Creator $49/mo · Collector $490/mo.',
+      'BitBasel — Built for the Future of Art Culture. Global platform for artists, collectors, founders, and cultural leaders. Creator $49/mo · Collector $490/yr.',
     creator: '@bitbasel',
     site: '@bitbasel',
   },

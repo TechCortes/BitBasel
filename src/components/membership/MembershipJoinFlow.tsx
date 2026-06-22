@@ -1,237 +1,456 @@
 'use client';
 
-import React, { useState } from 'react';
-import { TIERS, tierPrice } from '@/lib/tiers';
-import type { TierId } from '@/lib/tiers';
-import type { JoinResponse, WalletChain } from '@/types/membership';
+// ─────────────────────────────────────────────────────────────
+// BitBasel  —  Membership Join Flow
+//
+// Tier pricing (no toggle — each tier has one billing interval):
+//   Community  free        hidden from this component
+//   Creator    $49/mo      requires admin approval
+//   Collector  $490/yr     instant on payment
+//
+// Steps:
+//   1. select  — tier cards (Creator + Collector only)
+//   2. apply   — form fields (vary by tier)
+//   3. status  — outcome screen
+// ─────────────────────────────────────────────────────────────
 
-type Step = 'tier' | 'details' | 'confirm' | 'success';
-type Billing = 'monthly' | 'annual';
+import { useState, useCallback } from 'react';
+import { PRICING_TIERS, getBillingLabel } from '../../lib/tiers';
+import type { BitBaselTierKey, JoinRequest, JoinResponse } from '../../types/membership';
 
-interface Props {
-  walletAddress: string;
-  chain: WalletChain;
-  defaultTier?: TierId;
+type Step = 'select' | 'apply' | 'status';
+type JoinStatus = 'active' | 'pending_approval' | 'pending_payment' | 'error';
+
+interface FormState {
+  email: string;
+  name: string;
+  // Creator
+  artist_name: string;
+  portfolio_url: string;
+  instagram: string;
+  twitter: string;
+  // Collector
+  collecting_focus: string;
 }
 
-export function MembershipJoinFlow({ walletAddress, chain, defaultTier = 'creator' }: Props) {
-  const [step, setStep] = useState<Step>('tier');
-  const [tierId, setTierId] = useState<TierId>(defaultTier);
-  const [billing, setBilling] = useState<Billing>('monthly');
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<JoinResponse | null>(null);
+interface MembershipJoinFlowProps {
+  /** Pre-select a tier (e.g. from ?tier=collector in the URL) */
+  defaultTier?: BitBaselTierKey;
+  walletAddress?: string;
+  onSuccess?: (tier: BitBaselTierKey) => void;
+}
 
-  const tier = TIERS[tierId];
-  const price = tierPrice(tierId, billing);
-  const annualSaving = TIERS[tierId].monthlyPrice * 12 - TIERS[tierId].annualPrice;
+const INITIAL_FORM: FormState = {
+  email: '',
+  name: '',
+  artist_name: '',
+  portfolio_url: '',
+  instagram: '',
+  twitter: '',
+  collecting_focus: '',
+};
 
-  async function handleJoin() {
-    setSubmitting(true);
-    setError(null);
+export default function MembershipJoinFlow({
+  defaultTier,
+  walletAddress,
+  onSuccess,
+}: MembershipJoinFlowProps) {
+  const [step, setStep] = useState<Step>(defaultTier ? 'apply' : 'select');
+  const [tierKey, setTierKey] = useState<BitBaselTierKey | null>(defaultTier ?? null);
+  const [joinStatus, setJoinStatus] = useState<JoinStatus | null>(null);
+  const [statusMsg, setStatusMsg] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<Partial<FormState>>({});
+  const [form, setForm] = useState<FormState>(INITIAL_FORM);
 
+  const selectedTier = tierKey ? (PRICING_TIERS.find((t) => t.key === tierKey) ?? null) : null;
+
+  const setField = useCallback(
+    (field: keyof FormState) =>
+      (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        setForm((prev) => ({ ...prev, [field]: e.target.value }));
+        setErrors((prev) => ({ ...prev, [field]: undefined }));
+      },
+    []
+  );
+
+  // ── Validation ──────────────────────────────────────────────
+  function validate(): boolean {
+    const errs: Partial<FormState> = {};
+    if (!form.name.trim()) errs.name = 'Full name is required';
+    if (!form.email.trim()) errs.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+      errs.email = 'Enter a valid email address';
+
+    if (tierKey === 'creator') {
+      if (!form.artist_name.trim()) errs.artist_name = 'Artist or studio name is required';
+      if (form.portfolio_url.trim()) {
+        try {
+          new URL(form.portfolio_url);
+        } catch {
+          errs.portfolio_url = 'Enter a valid URL (https://...)';
+        }
+      }
+    }
+    setErrors(errs);
+    return Object.keys(errs).length === 0;
+  }
+
+  // ── Submit ──────────────────────────────────────────────────
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!tierKey || !validate()) return;
+
+    setLoading(true);
     try {
+      const payload: JoinRequest = {
+        email: form.email.trim(),
+        name: form.name.trim(),
+        tier_key: tierKey,
+        wallet: walletAddress,
+        ...(tierKey === 'creator' && {
+          artist_name: form.artist_name.trim(),
+          portfolio_url: form.portfolio_url.trim() || undefined,
+          instagram: form.instagram.trim() || undefined,
+          twitter: form.twitter.trim() || undefined,
+        }),
+        ...(tierKey === 'collector' && {
+          collecting_focus: form.collecting_focus || undefined,
+        }),
+      };
+
       const res = await fetch('/api/luma/join', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ walletAddress, chain, email, name, tierId, billing }),
+        body: JSON.stringify(payload),
       });
+      const data: JoinResponse | { error: string } = await res.json();
 
-      const data = (await res.json()) as JoinResponse & { error?: string };
+      if (!res.ok || !('status' in data)) {
+        setJoinStatus('error');
+        setStatusMsg('error' in data ? data.error : 'Something went wrong.');
+        setStep('status');
+        return;
+      }
 
-      if (!res.ok) throw new Error(data.error ?? 'Join failed');
-
-      setResult(data);
-      setStep('success');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
+      setJoinStatus(data.status as JoinStatus);
+      setStatusMsg(data.message);
+      setStep('status');
+      if (data.status === 'active') onSuccess?.(tierKey);
+    } catch {
+      setJoinStatus('error');
+      setStatusMsg('Network error — check your connection and try again.');
+      setStep('status');
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   }
 
-  // ── Step: choose tier ────────────────────────────────────────────────────
-
-  if (step === 'tier') {
-    return (
-      <div className="join-flow">
-        <h3 className="join-flow-heading">Choose your membership</h3>
-
-        <div className="join-billing-toggle">
-          {(['monthly', 'annual'] as Billing[]).map((b) => (
-            <button
-              key={b}
-              className={`join-billing-btn${billing === b ? ' active' : ''}`}
-              onClick={() => setBilling(b)}
-            >
-              {b === 'monthly' ? 'Monthly' : `Annual — save $${annualSaving}`}
-            </button>
-          ))}
-        </div>
-
-        <div className="join-tier-cards">
-          {(Object.values(TIERS) as (typeof TIERS)[TierId][]).map((t) => (
-            <button
-              key={t.id}
-              className={`join-tier-card${tierId === t.id ? ' selected' : ''}`}
-              onClick={() => setTierId(t.id)}
-            >
-              <div className="join-tier-name">{t.name}</div>
-              <div className="join-tier-price">
-                ${billing === 'annual' ? t.annualPrice : t.monthlyPrice}
-                <span>/{billing === 'annual' ? 'yr' : 'mo'}</span>
-              </div>
-              <ul className="join-tier-benefits">
-                {t.benefits.map((b) => (
-                  <li key={b}>{b}</li>
-                ))}
-              </ul>
-            </button>
-          ))}
-        </div>
-
-        <button className="btn-primary join-flow-next" onClick={() => setStep('details')}>
-          Continue as {tier.name} — ${price}/{billing === 'annual' ? 'yr' : 'mo'}
-        </button>
-      </div>
-    );
-  }
-
-  // ── Step: contact details ────────────────────────────────────────────────
-
-  if (step === 'details') {
-    return (
-      <div className="join-flow">
-        <h3 className="join-flow-heading">Your details</h3>
-        <p className="join-flow-sub">
-          Your wallet{' '}
-          <code className="join-wallet-code">
-            {walletAddress.slice(0, 8)}…{walletAddress.slice(-6)}
-          </code>{' '}
-          will be linked to this email.
-        </p>
-
-        <div className="join-field">
-          <label className="join-label" htmlFor="jf-name">
-            Full name
-          </label>
-          <input
-            id="jf-name"
-            className="join-input"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Your name"
-            autoComplete="name"
-          />
-        </div>
-
-        <div className="join-field">
-          <label className="join-label" htmlFor="jf-email">
-            Email
-          </label>
-          <input
-            id="jf-email"
-            className="join-input"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            autoComplete="email"
-          />
-        </div>
-
-        <div className="join-flow-actions">
-          <button className="btn-outline" onClick={() => setStep('tier')}>
-            Back
-          </button>
-          <button
-            className="btn-primary"
-            disabled={!name.trim() || !email.includes('@')}
-            onClick={() => setStep('confirm')}
-          >
-            Review order
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // ── Step: confirm ────────────────────────────────────────────────────────
-
-  if (step === 'confirm') {
-    return (
-      <div className="join-flow">
-        <h3 className="join-flow-heading">Confirm membership</h3>
-
-        <dl className="join-summary">
-          <div className="join-summary-row">
-            <dt>Tier</dt>
-            <dd>{tier.name}</dd>
-          </div>
-          <div className="join-summary-row">
-            <dt>Billing</dt>
-            <dd>
-              ${price}/{billing === 'annual' ? 'yr' : 'mo'}
-            </dd>
-          </div>
-          <div className="join-summary-row">
-            <dt>Email</dt>
-            <dd>{email}</dd>
-          </div>
-          <div className="join-summary-row">
-            <dt>Wallet</dt>
-            <dd>
-              {walletAddress.slice(0, 8)}…{walletAddress.slice(-6)}
-            </dd>
-          </div>
-        </dl>
-
-        <p className="join-payment-note">
-          After confirming, you&apos;ll be redirected to Luma to complete payment. Your wallet will
-          be activated once payment clears.
-        </p>
-
-        {error && <p className="join-error">{error}</p>}
-
-        <div className="join-flow-actions">
-          <button className="btn-outline" onClick={() => setStep('details')} disabled={submitting}>
-            Back
-          </button>
-          <button className="btn-primary" onClick={handleJoin} disabled={submitting}>
-            {submitting ? 'Processing…' : 'Confirm & pay on Luma'}
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // ── Step: success ────────────────────────────────────────────────────────
-
+  // ── Render ──────────────────────────────────────────────────
   return (
-    <div className="join-flow join-flow-success">
-      <p className="join-success-icon">✓</p>
-      <h3 className="join-flow-heading">Almost there</h3>
-      <p className="join-flow-sub">
-        Complete your payment on Luma to activate your {tier.name} membership.
-      </p>
-      {result?.lumaCheckoutUrl && (
-        <a
-          href={result.lumaCheckoutUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-primary join-luma-link"
-        >
-          Complete payment on Luma →
-        </a>
+    <div className="bb-join-flow">
+      {/* ── Tier selection ───────────────────────────── */}
+      {step === 'select' && (
+        <div>
+          <h2 className="bb-join-heading">Join BitBasel</h2>
+          <p className="bb-join-sub">Choose how you want to participate.</p>
+
+          <div className="bb-tier-grid">
+            {PRICING_TIERS.map((tier) => (
+              <button
+                key={tier.key}
+                type="button"
+                aria-pressed={tierKey === tier.key}
+                className={`bb-tier-card ${tierKey === tier.key ? 'bb-tier-card--selected' : ''}`}
+                onClick={() => setTierKey(tier.key as BitBaselTierKey)}
+              >
+                <div className="bb-tier-card__header">
+                  <span className="bb-tier-card__label">{tier.label}</span>
+                  <span className={`bb-tier-card__badge bb-tier-card__badge--${tier.badgeStyle}`}>
+                    {tier.priceLabel}
+                  </span>
+                </div>
+                <p className="bb-tier-card__tagline">{tier.tagline}</p>
+                <ul className="bb-tier-card__benefits">
+                  {tier.benefits.map((b) => (
+                    <li key={b}>{b}</li>
+                  ))}
+                </ul>
+                {tier.requiresApproval && (
+                  <p className="bb-tier-card__approval">
+                    ✦ Application required — reviewed within 2–3 business days
+                  </p>
+                )}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="bb-btn bb-btn--primary"
+            disabled={!tierKey}
+            onClick={() => setStep('apply')}
+          >
+            Continue {selectedTier ? `as ${selectedTier.label}` : ''}
+          </button>
+        </div>
       )}
-      <p className="join-payment-note">
-        Your wallet will be verified automatically once payment is confirmed.
-      </p>
+
+      {/* ── Application form ─────────────────────────── */}
+      {step === 'apply' && tierKey && selectedTier && (
+        <form onSubmit={handleSubmit} noValidate>
+          <button type="button" className="bb-back-btn" onClick={() => setStep('select')}>
+            ← Back
+          </button>
+
+          <h2 className="bb-join-heading">
+            {selectedTier.requiresApproval
+              ? `Apply as a ${selectedTier.label}`
+              : `Join as a ${selectedTier.label}`}
+          </h2>
+
+          {/* Billing summary — no toggle, just a clear statement */}
+          <div className="bb-billing-pill">
+            <span className="bb-billing-pill__price">{selectedTier.priceLabel}</span>
+            <span className="bb-billing-pill__interval">
+              {getBillingLabel(tierKey)} · billed via Luma
+            </span>
+          </div>
+
+          {/* Wallet connected indicator */}
+          {walletAddress && (
+            <div className="bb-wallet-pill">
+              <span className="bb-wallet-pill__dot" />
+              {walletAddress.slice(0, 6)}…{walletAddress.slice(-4)} connected
+            </div>
+          )}
+
+          {/* Base fields — all tiers */}
+          <div className="bb-field">
+            <label htmlFor="bb-name">Full name</label>
+            <input
+              id="bb-name"
+              type="text"
+              autoComplete="name"
+              value={form.name}
+              onChange={setField('name')}
+              placeholder="Satoshi Nakamoto"
+              aria-describedby={errors.name ? 'bb-name-err' : undefined}
+            />
+            {errors.name && (
+              <p id="bb-name-err" className="bb-field__error">
+                {errors.name}
+              </p>
+            )}
+          </div>
+
+          <div className="bb-field">
+            <label htmlFor="bb-email">Email address</label>
+            <input
+              id="bb-email"
+              type="email"
+              autoComplete="email"
+              value={form.email}
+              onChange={setField('email')}
+              placeholder="you@example.com"
+              aria-describedby={errors.email ? 'bb-email-err' : undefined}
+            />
+            {errors.email && (
+              <p id="bb-email-err" className="bb-field__error">
+                {errors.email}
+              </p>
+            )}
+            <p className="bb-field__hint">
+              {walletAddress
+                ? 'Links your wallet to your BitBasel membership.'
+                : "You'll receive a confirmation and payment link here."}
+            </p>
+          </div>
+
+          {/* Creator-only fields */}
+          {tierKey === 'creator' && (
+            <>
+              <hr className="bb-divider" />
+              <p className="bb-section-label">About your practice</p>
+
+              <div className="bb-field">
+                <label htmlFor="bb-artist">Artist or studio name</label>
+                <input
+                  id="bb-artist"
+                  type="text"
+                  value={form.artist_name}
+                  onChange={setField('artist_name')}
+                  placeholder="e.g. Rare Pixels Studio"
+                  aria-describedby={errors.artist_name ? 'bb-artist-err' : undefined}
+                />
+                {errors.artist_name && (
+                  <p id="bb-artist-err" className="bb-field__error">
+                    {errors.artist_name}
+                  </p>
+                )}
+              </div>
+
+              <div className="bb-field">
+                <label htmlFor="bb-portfolio">
+                  Portfolio URL <span className="bb-optional">(optional)</span>
+                </label>
+                <input
+                  id="bb-portfolio"
+                  type="url"
+                  value={form.portfolio_url}
+                  onChange={setField('portfolio_url')}
+                  placeholder="https://yoursite.com"
+                  aria-describedby={errors.portfolio_url ? 'bb-portfolio-err' : undefined}
+                />
+                {errors.portfolio_url && (
+                  <p id="bb-portfolio-err" className="bb-field__error">
+                    {errors.portfolio_url}
+                  </p>
+                )}
+              </div>
+
+              <div className="bb-field-row">
+                <div className="bb-field">
+                  <label htmlFor="bb-ig">
+                    Instagram <span className="bb-optional">(optional)</span>
+                  </label>
+                  <input
+                    id="bb-ig"
+                    type="text"
+                    value={form.instagram}
+                    onChange={setField('instagram')}
+                    placeholder="@handle"
+                  />
+                </div>
+                <div className="bb-field">
+                  <label htmlFor="bb-tw">
+                    Twitter / X <span className="bb-optional">(optional)</span>
+                  </label>
+                  <input
+                    id="bb-tw"
+                    type="text"
+                    value={form.twitter}
+                    onChange={setField('twitter')}
+                    placeholder="@handle"
+                  />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Collector-only fields */}
+          {tierKey === 'collector' && (
+            <>
+              <hr className="bb-divider" />
+              <div className="bb-field">
+                <label htmlFor="bb-focus">
+                  Collecting focus <span className="bb-optional">(optional)</span>
+                </label>
+                <select
+                  id="bb-focus"
+                  value={form.collecting_focus}
+                  onChange={setField('collecting_focus')}
+                >
+                  <option value="">Select an area</option>
+                  <option value="bitcoin_ordinals">Bitcoin Ordinals</option>
+                  <option value="physical_fine_art">Physical fine art</option>
+                  <option value="dynamic_nfts">Dynamic NFTs</option>
+                  <option value="all">All categories</option>
+                </select>
+              </div>
+            </>
+          )}
+
+          <button type="submit" className="bb-btn bb-btn--primary" disabled={loading}>
+            {loading
+              ? 'Submitting…'
+              : selectedTier.requiresApproval
+                ? 'Submit application'
+                : `Join for ${selectedTier.priceLabel}`}
+          </button>
+
+          {tierKey === 'collector' && (
+            <p className="bb-field__hint" style={{ marginTop: '0.75rem', textAlign: 'center' }}>
+              You'll receive a secure payment link from Luma to complete your $490/year
+              subscription.
+            </p>
+          )}
+        </form>
+      )}
+
+      {/* ── Status screen ────────────────────────────── */}
+      {step === 'status' && joinStatus && (
+        <StatusScreen
+          status={joinStatus}
+          message={statusMsg}
+          tierKey={tierKey}
+          tierLabel={selectedTier?.label ?? null}
+          onRetry={() => {
+            setJoinStatus(null);
+            setStep('apply');
+          }}
+        />
+      )}
     </div>
   );
 }
 
-export default MembershipJoinFlow;
+// ── Status screen ─────────────────────────────────────────────
+
+function StatusScreen({
+  status,
+  message,
+  tierKey,
+  tierLabel,
+  onRetry,
+}: {
+  status: 'active' | 'pending_approval' | 'pending_payment' | 'error';
+  message: string;
+  tierKey: BitBaselTierKey | null;
+  tierLabel: string | null;
+  onRetry: () => void;
+}) {
+  const config = {
+    active: { icon: '✓', heading: "You're in.", color: 'var(--bb-teal)' },
+    pending_approval: { icon: '◎', heading: 'Application received.', color: 'var(--bb-purple)' },
+    pending_payment: { icon: '◈', heading: 'Check your email.', color: 'var(--bb-amber)' },
+    error: { icon: '✕', heading: 'Something went wrong.', color: 'var(--bb-coral)' },
+  }[status];
+
+  return (
+    <div className="bb-status" role="status" aria-live="polite">
+      <div className="bb-status__icon" style={{ color: config.color }} aria-hidden="true">
+        {config.icon}
+      </div>
+      <h2 className="bb-join-heading">{config.heading}</h2>
+      <p className="bb-join-sub">{message}</p>
+
+      {status === 'pending_approval' && (
+        <div className="bb-info-box">
+          <p>We review every Creator application within 2–3 business days.</p>
+          <p>You'll receive an email once approved — or if we need more information.</p>
+        </div>
+      )}
+
+      {status === 'pending_payment' && (
+        <div className="bb-info-box">
+          <p>Luma will send a payment link to activate your $490/year Collector membership.</p>
+          <p>If it doesn't arrive in a few minutes, check your spam folder.</p>
+        </div>
+      )}
+
+      {status === 'active' && tierLabel && (
+        <div className="bb-info-box bb-info-box--success">
+          <p>Your {tierLabel} membership is active.</p>
+          <p>Refresh the page to access member content.</p>
+        </div>
+      )}
+
+      {status === 'error' && (
+        <button className="bb-btn bb-btn--secondary" onClick={onRetry} type="button">
+          Try again
+        </button>
+      )}
+    </div>
+  );
+}

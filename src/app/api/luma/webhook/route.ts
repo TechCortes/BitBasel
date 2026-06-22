@@ -41,19 +41,30 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
   }
 
-  const { action, data } = payload;
-  const guest = data.guest;
+  const event_type = payload.event_type as string;
+  const { data } = payload;
+  // data is Record<string,unknown> — narrowed to the guest shape we expect
+  const rawData = data as Record<string, unknown>;
+  const guest = (rawData.guest ?? null) as {
+    api_id: string;
+    approval_status?: string;
+  } | null;
 
   console.info(`${LOG_PREFIX} received`, {
-    action,
+    event_type,
     hookId: payload.hook_id,
     guestId: guest?.api_id,
   });
 
   // Only process guest approval/decline events
   if (
-    !guest ||
-    !['event.guest.approved', 'event.guest.declined', 'event.guest.updated'].includes(action)
+    !guest?.api_id ||
+    ![
+      'event.guest.approved',
+      'event.guest.declined',
+      'event.guest.updated',
+      'guest_updated',
+    ].includes(event_type)
   ) {
     return NextResponse.json({ received: true });
   }
@@ -64,22 +75,23 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     });
 
     if (!member) {
-      // Guest not linked to a BitBasel member — not an error, just not ours
       console.info(`${LOG_PREFIX} guest not found in members`, { guestId: guest.api_id });
       return NextResponse.json({ received: true });
     }
 
     if (
-      action === 'event.guest.approved' ||
-      (action === 'event.guest.updated' && guest.approval_status === 'approved')
+      event_type === 'event.guest.approved' ||
+      (event_type === 'event.guest.updated' && guest.approval_status === 'approved') ||
+      (event_type === 'guest_updated' && guest.approval_status === 'approved')
     ) {
       await db.member.update({ where: { id: member.id }, data: { status: 'active' } });
       console.info(`${LOG_PREFIX} member activated`, { memberId: member.id, email: member.email });
     }
 
     if (
-      action === 'event.guest.declined' ||
-      (action === 'event.guest.updated' && guest.approval_status === 'declined')
+      event_type === 'event.guest.declined' ||
+      (event_type === 'event.guest.updated' && guest.approval_status === 'declined') ||
+      (event_type === 'guest_updated' && guest.approval_status === 'declined')
     ) {
       await db.member.update({ where: { id: member.id }, data: { status: 'cancelled' } });
       console.info(`${LOG_PREFIX} member cancelled`, { memberId: member.id, email: member.email });
@@ -89,7 +101,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Internal error';
     console.error(`${LOG_PREFIX} db error`, { message, guestId: guest.api_id });
-    // Return 500 so Luma retries delivery
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

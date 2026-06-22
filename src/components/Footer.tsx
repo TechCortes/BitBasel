@@ -18,8 +18,8 @@ export const Footer: React.FC = () => {
               className="footer-logo-img"
             />
             <p>
-              A global cultural technology platform connecting art, innovation, and community
-              through live events, digital infrastructure, and real-world activations.
+              Est. 2020 — The leading authority at the intersection of Art, Technology, and Web3.
+              Trusted by millions of artists and creative industries for over six years.
             </p>
             <div className="social-links">
               <a
@@ -60,15 +60,30 @@ export const Footer: React.FC = () => {
           <div className="footer-section">
             <h3>Events</h3>
             <div className="footer-links">
-              <Link href="/events" className="footer-link">
+              <a
+                href="https://www.bitbasel.miami"
+                className="footer-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Annual December Event
-              </Link>
-              <Link href="/events#gatherings" className="footer-link">
+              </a>
+              <a
+                href="https://www.bitbasel.miami"
+                className="footer-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Private Gatherings
-              </Link>
-              <Link href="/events#roundtables" className="footer-link">
+              </a>
+              <a
+                href="https://www.bitbasel.miami"
+                className="footer-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Investor Roundtables
-              </Link>
+              </a>
               <Link href="/membership" className="footer-link">
                 Apply for Access
               </Link>
@@ -82,18 +97,18 @@ export const Footer: React.FC = () => {
                 Artists
               </Link>
               <a
-                href="https://bitbasel.com"
+                href="https://www.bitbasel.miami"
                 className="footer-link"
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 About BitBasel
               </a>
-              <a href="mailto:info@bitbasel.miami" className="footer-link">
+              <a href="mailto:jorge@bitbasel.miami" className="footer-link">
                 Contact
               </a>
               <a
-                href="https://bitbasel.miami"
+                href="https://www.bitbasel.miami"
                 className="footer-link"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -112,7 +127,7 @@ export const Footer: React.FC = () => {
               <Link href="/membership?tier=collector" className="footer-link">
                 Collector Membership
               </Link>
-              <Link href="/membership?tier=enterprise" className="footer-link">
+              <Link href="/membership" className="footer-link">
                 Gallery & Enterprise
               </Link>
               <Link href="/membership" className="footer-link">
@@ -126,11 +141,11 @@ export const Footer: React.FC = () => {
           <div className="footer-bottom-content">
             <p>&copy; 2026 BitBasel. All rights reserved.</p>
             <div className="footer-bottom-links">
-              <a href="mailto:info@bitbasel.miami" className="footer-link">
-                info@bitbasel.miami
+              <a href="mailto:jorge@bitbasel.miami" className="footer-link">
+                jorge@bitbasel.miami
               </a>
               <a
-                href="https://bitbasel.miami/legals/privacy-policy"
+                href="https://www.bitbasel.miami/legals/privacy-policy"
                 className="footer-link"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -138,7 +153,7 @@ export const Footer: React.FC = () => {
                 Privacy Policy
               </a>
               <a
-                href="https://bitbasel.miami/legals/terms"
+                href="https://www.bitbasel.miami/legals/terms"
                 className="footer-link"
                 target="_blank"
                 rel="noopener noreferrer"
@@ -146,7 +161,7 @@ export const Footer: React.FC = () => {
                 Terms
               </a>
               <a
-                href="https://bitbasel.miami/contact"
+                href="https://www.bitbasel.miami/contact"
                 className="footer-link"
                 target="_blank"
                 rel="noopener noreferrer"
