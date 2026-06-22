@@ -30,9 +30,10 @@ function formatTime(iso: string): string {
 }
 
 function EventCard({ event }: { event: LumaEvent }) {
-  const free = event.ticket_types.some((t) => t.price_cents === 0);
-  const totalCapacity = event.ticket_types.reduce((s, t) => s + (t.capacity ?? 0), 0);
-  const totalSold = event.ticket_types.reduce((s, t) => s + t.sold_count, 0);
+  const ticketTypes = event.ticket_types ?? [];
+  const free = ticketTypes.some((t) => t.price_cents === 0);
+  const totalCapacity = ticketTypes.reduce((s, t) => s + (t.capacity ?? 0), 0);
+  const totalSold = ticketTypes.reduce((s, t) => s + t.sold_count, 0);
   const spotsLeft = totalCapacity > 0 ? totalCapacity - totalSold : null;
 
   return (
