@@ -1,44 +1,135 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useWalletStore } from '@/store/StoreProvider';
-import { WalletProvider, EIP6963ProviderDetail } from '@/types/wallet';
+import type { WalletProvider, EIP6963ProviderDetail } from '@/types/wallet';
 
-type WalletTab = 'bitcoin' | 'evm';
+type Tab = 'bitcoin' | 'evm';
 
-const BITCOIN_PROVIDERS: {
+// ── SVG wallet icons ───────────────────────────────────────────────────────────
+
+const PhantomIcon = () => (
+  <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+    <rect width="38" height="38" rx="10" fill="#9945FF" />
+    <path
+      d="M5 20.5C5 13.6 10.6 8 17.5 8H21C27.6 8 33 13.4 33 20v1c0 4.1-3.4 7.5-7.5 7.5H24c-.8 0-1.4.5-1.5 1.3l-.5 2.2H21c-.6 0-1-.4-1-1v-1h-2v1c0 .6-.4 1-1 1h-1l-.5-2.2c-.2-.8-.7-1.3-1.5-1.3H12.5C8.4 28.5 5 25.1 5 21v-.5z"
+      fill="white"
+    />
+    <circle cx="15" cy="20" r="2.2" fill="#9945FF" />
+    <circle cx="23" cy="20" r="2.2" fill="#9945FF" />
+  </svg>
+);
+
+const LeatherIcon = () => (
+  <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+    <rect width="38" height="38" rx="10" fill="#0C0C0C" />
+    <rect x="1" y="1" width="36" height="36" rx="9" stroke="#2a2a2a" strokeWidth="1" />
+    <path
+      d="M12 10h5c5.5 0 9 3.8 9 9s-3.5 9-9 9h-5V10zm5 15c3.3 0 6-2.4 6-6s-2.7-6-6-6h-2v12h2z"
+      fill="white"
+    />
+    <rect x="12" y="27" width="12" height="2.5" rx="1.25" fill="white" />
+  </svg>
+);
+
+const UnisatIcon = () => (
+  <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+    <rect width="38" height="38" rx="10" fill="#FF7828" />
+    <path
+      d="M14 10h3v13c0 1.1 1 2 2 2s2-.9 2-2V10h3v13c0 2.8-2.2 5-5 5s-5-2.2-5-5V10z"
+      fill="white"
+    />
+    <rect x="10" y="26" width="18" height="2.5" rx="1.25" fill="white" />
+  </svg>
+);
+
+const XverseIcon = () => (
+  <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+    <rect width="38" height="38" rx="10" fill="#1A1A2E" />
+    <path
+      d="M10 10h4.5l4.5 6.5L23.5 10H28l-7 10 8 12h-4.5L19 25l-5 7h-4.5l8-12-7.5-10z"
+      fill="white"
+    />
+  </svg>
+);
+
+const WalletConnectIcon = () => (
+  <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+    <rect width="38" height="38" rx="10" fill="#3B99FC" />
+    <path d="M8 18c6.1-6.1 16-6.1 22 0" stroke="white" strokeWidth="3" strokeLinecap="round" />
+    <path
+      d="M11.5 21.5c4.2-4.2 11-4.2 15.2 0"
+      stroke="white"
+      strokeWidth="3"
+      strokeLinecap="round"
+    />
+    <path d="M15 25c2.2-2.2 6-2.2 8.2 0" stroke="white" strokeWidth="3" strokeLinecap="round" />
+  </svg>
+);
+
+const FallbackEVMIcon = () => (
+  <svg width="38" height="38" viewBox="0 0 38 38" fill="none">
+    <rect width="38" height="38" rx="10" fill="#627EEA" />
+    <path d="M19 8v8.7l7.3 3.3L19 8z" fill="white" fillOpacity="0.6" />
+    <path d="M19 8L11.7 20l7.3-3.3V8z" fill="white" />
+    <path d="M19 25.1v4.9l7.3-10.1L19 25.1z" fill="white" fillOpacity="0.6" />
+    <path d="M19 30v-4.9l-7.3-5.2L19 30z" fill="white" />
+  </svg>
+);
+
+// ── Bitcoin wallet config ──────────────────────────────────────────────────────
+
+interface BitcoinWallet {
   id: WalletProvider;
   name: string;
-  icon: string;
-  installed: () => boolean;
-}[] = [
-  { id: 'unisat', name: 'Unisat', icon: '🔶', installed: () => !!(window as any).unisat },
+  tagline: string;
+  installUrl: string;
+  mobileUrl: string | null;
+  Icon: React.FC;
+  detect: () => boolean;
+}
+
+const BITCOIN_WALLETS: BitcoinWallet[] = [
   {
-    id: 'xverse',
-    name: 'Xverse',
-    icon: '⚡',
-    installed: () => !!(window as any).BitcoinProvider && !!(window as any).StacksProvider,
-  },
-  {
-    id: 'ordinals-wallet',
-    name: 'Ordinals',
-    icon: '🎨',
-    installed: () => !!(window as any).ordinalsWallet,
+    id: 'phantom',
+    name: 'Phantom',
+    tagline: 'Bitcoin · Ordinals',
+    installUrl: 'https://phantom.app/download',
+    mobileUrl: null,
+    Icon: PhantomIcon,
+    detect: () => !!(window as any).phantom?.bitcoin,
   },
   {
     id: 'leather',
     name: 'Leather',
-    icon: '🐂',
-    installed: () => !!(window as any).LeatherProvider,
+    tagline: 'Bitcoin · Ordinals · Stacks',
+    installUrl: 'https://leather.io/install-extension',
+    mobileUrl: null,
+    Icon: LeatherIcon,
+    detect: () => !!(window as any).LeatherProvider,
   },
   {
-    id: 'phantom',
-    name: 'Phantom',
-    icon: '👻',
-    installed: () => !!(window as any).phantom?.bitcoin,
+    id: 'unisat',
+    name: 'Unisat',
+    tagline: 'Bitcoin · BRC-20 · Ordinals',
+    installUrl: 'https://unisat.io/download',
+    mobileUrl: null,
+    Icon: UnisatIcon,
+    detect: () => !!(window as any).unisat,
+  },
+  {
+    id: 'xverse',
+    name: 'Xverse',
+    tagline: 'Bitcoin · Ordinals · Runes',
+    installUrl: 'https://www.xverse.app/download',
+    mobileUrl: 'https://www.xverse.app/open',
+    Icon: XverseIcon,
+    detect: () => !!(window as any).BitcoinProvider && !!(window as any).StacksProvider,
   },
 ];
+
+// ── Component ──────────────────────────────────────────────────────────────────
 
 interface WalletConnectProps {
   onClose?: () => void;
@@ -47,109 +138,90 @@ interface WalletConnectProps {
 
 const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showModal = false }) => {
   const walletStore = useWalletStore();
-  const [activeTab, setActiveTab] = useState<WalletTab>('bitcoin');
+  const [activeTab, setActiveTab] = useState<Tab>('bitcoin');
   const [connecting, setConnecting] = useState<string | null>(null);
-  const [connectionAttempts, setConnectionAttempts] = useState<Record<string, number>>({});
+  const [isMounted, setIsMounted] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const validateBitcoinConnect = (provider: WalletProvider): boolean => {
-    if (typeof window === 'undefined') return false;
-    if ((connectionAttempts[provider] || 0) >= 3) {
-      walletStore.error = `Too many connection attempts for ${provider}. Please refresh and try again.`;
-      return false;
-    }
-    return true;
-  };
+  useEffect(() => {
+    setIsMounted(true);
+    setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+  }, []);
 
-  const handleBitcoinConnect = async (provider: WalletProvider) => {
-    if (!validateBitcoinConnect(provider)) return;
-    setConnecting(provider);
-    setConnectionAttempts((prev) => ({ ...prev, [provider]: (prev[provider] || 0) + 1 }));
+  const handleBitcoinConnect = async (id: WalletProvider) => {
+    if (connecting) return;
+    setConnecting(id);
     try {
-      await walletStore.connectWallet(provider);
-      setConnectionAttempts((prev) => ({ ...prev, [provider]: 0 }));
+      await walletStore.connectWallet(id);
       onClose?.();
     } catch {
-      setTimeout(() => setConnecting(null), 1000);
+      setTimeout(() => setConnecting(null), 1500);
     } finally {
-      setTimeout(() => setConnecting(null), 500);
+      setTimeout(() => setConnecting(null), 600);
     }
   };
 
-  const handleEVMProviderConnect = async (detail: EIP6963ProviderDetail) => {
+  const handleEVMConnect = async (detail: EIP6963ProviderDetail) => {
     const key = `evm-${detail.info.uuid}`;
+    if (connecting) return;
     setConnecting(key);
     try {
       await walletStore.connectEVMProvider(detail);
       onClose?.();
     } catch {
-      setTimeout(() => setConnecting(null), 1000);
+      setTimeout(() => setConnecting(null), 1500);
     } finally {
-      setTimeout(() => setConnecting(null), 500);
+      setTimeout(() => setConnecting(null), 600);
     }
   };
 
   const handleWalletConnectConnect = async () => {
+    if (connecting) return;
     setConnecting('walletconnect');
     try {
       await walletStore.connectWalletConnect();
       onClose?.();
     } catch {
-      setTimeout(() => setConnecting(null), 1000);
+      setTimeout(() => setConnecting(null), 1500);
     } finally {
-      setTimeout(() => setConnecting(null), 500);
+      setTimeout(() => setConnecting(null), 600);
     }
   };
 
   const handleBitcoinDisconnect = async () => {
-    try {
-      await walletStore.disconnectWallet();
-      onClose?.();
-    } catch {
-      // swallow
-    }
+    await walletStore.disconnectWallet();
+    onClose?.();
   };
 
   const handleEVMDisconnect = async () => {
-    try {
-      await walletStore.disconnectEVM();
-      onClose?.();
-    } catch {
-      // swallow
-    }
+    await walletStore.disconnectEVM();
+    onClose?.();
   };
 
-  // Non-modal: connected state shown in nav bar
+  // ── Nav bar: connected ─────────────────────────────────────────────────────
   if ((walletStore.isConnected || walletStore.isEVMConnected) && !showModal) {
-    const btcProvider = BITCOIN_PROVIDERS.find((p) => p.id === walletStore.walletInfo?.provider);
     return (
       <div className="wallet-connected-group">
         {walletStore.isConnected && (
           <div className="wallet-connected">
-            <div className="wallet-info">
-              <span className="wallet-provider">{btcProvider?.icon || '🔗'}</span>
-              <span className="wallet-address">{walletStore.shortAddress}</span>
-              <span className="wallet-balance">{walletStore.balanceInBTC.toFixed(6)} BTC</span>
-            </div>
+            <span className="wallet-dot" />
+            <span className="wallet-address">{walletStore.shortAddress}</span>
             <button className="btn-outline disconnect-btn" onClick={handleBitcoinDisconnect}>
               Disconnect
             </button>
           </div>
         )}
         {walletStore.isEVMConnected && (
-          <div className="wallet-connected evm-connected">
-            <div className="wallet-info">
-              {walletStore.evmWalletInfo?.providerIcon ? (
-                <img
-                  src={walletStore.evmWalletInfo.providerIcon}
-                  alt={walletStore.evmWalletInfo.providerName}
-                  className="evm-provider-icon-sm"
-                />
-              ) : (
-                <span className="wallet-provider">🔷</span>
-              )}
-              <span className="wallet-address">{walletStore.shortEVMAddress}</span>
-              <span className="wallet-balance">{walletStore.evmChainName}</span>
-            </div>
+          <div className="wallet-connected">
+            {walletStore.evmWalletInfo?.providerIcon && (
+              <img
+                src={walletStore.evmWalletInfo.providerIcon}
+                alt=""
+                className="evm-provider-icon-sm"
+              />
+            )}
+            <span className="wallet-dot" />
+            <span className="wallet-address">{walletStore.shortEVMAddress}</span>
             <button className="btn-outline disconnect-btn" onClick={handleEVMDisconnect}>
               Disconnect
             </button>
@@ -159,29 +231,30 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
     );
   }
 
-  // Non-modal: not connected
+  // ── Nav bar: not connected ─────────────────────────────────────────────────
   if (!showModal) {
     return <button className="btn-primary connect-wallet-btn">Connect Wallet</button>;
   }
 
-  // Modal
+  // ── Modal ──────────────────────────────────────────────────────────────────
   return (
     <div className="wallet-modal-overlay" onClick={onClose}>
       <div className="wallet-modal" onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
         <div className="wallet-modal-header">
           <span className="wallet-modal-title">Connect Wallet</span>
-          <button className="close-btn" onClick={onClose}>
+          <button className="close-btn" onClick={onClose} aria-label="Close">
             ×
           </button>
         </div>
 
-        {/* Tab bar */}
+        {/* Tabs */}
         <div className="wallet-tab-bar">
           <button
             className={`wallet-tab-btn${activeTab === 'bitcoin' ? ' active' : ''}`}
             onClick={() => setActiveTab('bitcoin')}
           >
-            Bitcoin Ordinals
+            Bitcoin
           </button>
           <button
             className={`wallet-tab-btn${activeTab === 'evm' ? ' active' : ''}`}
@@ -191,178 +264,215 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
           </button>
         </div>
 
-        {/* Error banners */}
-        {activeTab === 'bitcoin' && walletStore.error && (
-          <div className="error-message">
-            {walletStore.error}
-            <button className="clear-error-btn" onClick={() => walletStore.clearError()}>
-              ×
-            </button>
-          </div>
-        )}
-        {activeTab === 'evm' && walletStore.evmError && (
-          <div className="error-message">
-            {walletStore.evmError}
-            <button className="clear-error-btn" onClick={() => walletStore.clearEVMError()}>
+        {/* Error banner */}
+        {(activeTab === 'bitcoin' ? walletStore.error : walletStore.evmError) && (
+          <div className="wallet-error-banner">
+            <span>{activeTab === 'bitcoin' ? walletStore.error : walletStore.evmError}</span>
+            <button
+              className="wallet-error-dismiss"
+              onClick={() =>
+                activeTab === 'bitcoin' ? walletStore.clearError() : walletStore.clearEVMError()
+              }
+            >
               ×
             </button>
           </div>
         )}
 
-        {/* ── Bitcoin tab ── */}
+        {/* ── Bitcoin tab ────────────────────────────────────────────── */}
         {activeTab === 'bitcoin' && (
-          <>
+          <div className="wallet-list">
             {walletStore.isConnected ? (
-              <div className="wallet-already-connected">
-                <p className="wallet-connected-label">Bitcoin Ordinals — Connected</p>
-                <div className="wallet-connected-info">
-                  <span>{walletStore.shortAddress}</span>
-                  <span>{walletStore.balanceInBTC.toFixed(6)} BTC</span>
+              <div className="wallet-connected-panel">
+                <div className="wallet-connected-panel-row">
+                  <span className="wallet-dot wallet-dot-lg" />
+                  <div>
+                    <p className="wallet-connected-addr">{walletStore.shortAddress}</p>
+                    <p className="wallet-connected-sub">
+                      {walletStore.balanceInBTC.toFixed(6)} BTC
+                    </p>
+                  </div>
                 </div>
-                <button className="btn-outline" onClick={handleBitcoinDisconnect}>
+                <button
+                  className="btn-outline wallet-disconnect-btn"
+                  onClick={handleBitcoinDisconnect}
+                >
                   Disconnect
                 </button>
               </div>
             ) : (
-              <div className="wallet-providers">
-                {BITCOIN_PROVIDERS.map((provider) => {
-                  const isInstalled = typeof window !== 'undefined' ? provider.installed() : false;
-                  const isConnecting = connecting === provider.id;
-                  const attempts = connectionAttempts[provider.id] || 0;
-                  const isBlocked = attempts >= 3;
+              BITCOIN_WALLETS.map((wallet) => {
+                const isInstalled = isMounted ? wallet.detect() : false;
+                const isConnecting = connecting === wallet.id;
+                const { Icon } = wallet;
 
-                  return (
+                const installTarget =
+                  isMobile && wallet.mobileUrl ? wallet.mobileUrl : wallet.installUrl;
+
+                return (
+                  <div
+                    key={wallet.id}
+                    className={`wallet-row${isInstalled ? ' wallet-row--active' : ' wallet-row--install'}${isConnecting ? ' wallet-row--connecting' : ''}`}
+                  >
                     <button
-                      key={provider.id}
-                      className={`wallet-provider${!isInstalled ? ' not-installed' : ''}${isBlocked ? ' blocked' : ''}`}
-                      onClick={() => isInstalled && !isBlocked && handleBitcoinConnect(provider.id)}
-                      disabled={!isInstalled || !!connecting || isBlocked}
+                      className="wallet-row-btn"
+                      onClick={() => isInstalled && handleBitcoinConnect(wallet.id)}
+                      disabled={!isInstalled || !!connecting}
+                      aria-label={`Connect ${wallet.name}`}
                     >
-                      <div className="provider-icon">{provider.icon}</div>
-                      <div className="provider-info">
-                        <div className="provider-name">{provider.name}</div>
-                        <div className="provider-description">
-                          {isBlocked
-                            ? 'Connection blocked — refresh to retry'
-                            : !isInstalled
-                              ? 'Not installed'
-                              : attempts > 0
-                                ? `${attempts}/3 attempts`
-                                : 'Bitcoin Ordinals wallet'}
-                        </div>
+                      <div className="wallet-row-icon">
+                        <Icon />
                       </div>
-                      {isConnecting && <div className="connecting-spinner">⟳</div>}
+                      <div className="wallet-row-info">
+                        <span className="wallet-row-name">{wallet.name}</span>
+                        <span className="wallet-row-sub">{wallet.tagline}</span>
+                      </div>
+                      {isConnecting ? (
+                        <span className="wallet-spinner" aria-hidden="true" />
+                      ) : isInstalled ? (
+                        <span className="wallet-row-arrow">→</span>
+                      ) : null}
                     </button>
-                  );
-                })}
-              </div>
+                    {!isInstalled && (
+                      <a
+                        href={installTarget}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="wallet-install-btn"
+                      >
+                        {isMobile && wallet.mobileUrl ? 'Open app →' : 'Install →'}
+                      </a>
+                    )}
+                  </div>
+                );
+              })
             )}
-          </>
+          </div>
         )}
 
-        {/* ── EVM tab ── */}
+        {/* ── EVM tab ────────────────────────────────────────────────── */}
         {activeTab === 'evm' && (
-          <>
+          <div className="wallet-list">
             {walletStore.isEVMConnected ? (
-              <div className="wallet-already-connected">
-                <p className="wallet-connected-label">EVM Wallet — Connected</p>
-                <div className="wallet-connected-info">
-                  {walletStore.evmWalletInfo?.providerIcon && (
+              <div className="wallet-connected-panel">
+                <div className="wallet-connected-panel-row">
+                  {walletStore.evmWalletInfo?.providerIcon ? (
                     <img
                       src={walletStore.evmWalletInfo.providerIcon}
-                      alt={walletStore.evmWalletInfo.providerName}
-                      className="evm-wallet-icon-sm"
+                      alt=""
+                      className="wallet-connected-provider-icon"
                     />
+                  ) : (
+                    <span className="wallet-dot wallet-dot-lg" />
                   )}
-                  <span>{walletStore.shortEVMAddress}</span>
-                  <span>{walletStore.evmChainName}</span>
+                  <div>
+                    <p className="wallet-connected-addr">{walletStore.shortEVMAddress}</p>
+                    <p className="wallet-connected-sub">{walletStore.evmChainName}</p>
+                  </div>
                 </div>
-                <button className="btn-outline" onClick={handleEVMDisconnect}>
+                <button className="btn-outline wallet-disconnect-btn" onClick={handleEVMDisconnect}>
                   Disconnect
                 </button>
               </div>
             ) : (
               <>
-                {walletStore.detectedEVMProviders.length > 0 ? (
+                {/* WalletConnect — always first, works on mobile + desktop */}
+                <div
+                  className={`wallet-row wallet-row--active wallet-row--featured${connecting === 'walletconnect' ? ' wallet-row--connecting' : ''}`}
+                >
+                  <button
+                    className="wallet-row-btn"
+                    onClick={handleWalletConnectConnect}
+                    disabled={!!connecting || walletStore.evmConnecting}
+                  >
+                    <div className="wallet-row-icon">
+                      <WalletConnectIcon />
+                    </div>
+                    <div className="wallet-row-info">
+                      <span className="wallet-row-name">WalletConnect</span>
+                      <span className="wallet-row-sub">
+                        {isMobile ? 'Tap to open your wallet app' : 'Scan QR · 400+ wallets'}
+                      </span>
+                    </div>
+                    {connecting === 'walletconnect' ? (
+                      <span className="wallet-spinner" aria-hidden="true" />
+                    ) : (
+                      <span className="wallet-row-arrow">→</span>
+                    )}
+                  </button>
+                </div>
+
+                {/* EIP-6963 auto-detected wallets */}
+                {walletStore.detectedEVMProviders.length > 0 && (
                   <>
-                    <p className="wallet-section-label">Detected in your browser</p>
-                    <div className="wallet-providers">
-                      {walletStore.detectedEVMProviders.map((detail) => {
-                        const isConnecting = connecting === `evm-${detail.info.uuid}`;
-                        return (
+                    <p className="wallet-divider-label">Detected in browser</p>
+                    {walletStore.detectedEVMProviders.map((detail) => {
+                      const key = `evm-${detail.info.uuid}`;
+                      const isConnecting = connecting === key;
+                      return (
+                        <div
+                          key={detail.info.uuid}
+                          className={`wallet-row wallet-row--active${isConnecting ? ' wallet-row--connecting' : ''}`}
+                        >
                           <button
-                            key={detail.info.uuid}
-                            className="wallet-provider"
-                            onClick={() => !connecting && handleEVMProviderConnect(detail)}
+                            className="wallet-row-btn"
+                            onClick={() => handleEVMConnect(detail)}
                             disabled={!!connecting || walletStore.evmConnecting}
                           >
-                            <div className="provider-icon-evm">
+                            <div className="wallet-row-icon">
                               {detail.info.icon ? (
                                 <img
                                   src={detail.info.icon}
                                   alt={detail.info.name}
-                                  className="evm-wallet-icon"
+                                  width="38"
+                                  height="38"
+                                  style={{ borderRadius: 10, display: 'block' }}
                                 />
                               ) : (
-                                <span>🔷</span>
+                                <FallbackEVMIcon />
                               )}
                             </div>
-                            <div className="provider-info">
-                              <div className="provider-name">{detail.info.name}</div>
-                              <div className="provider-description">EVM · {detail.info.rdns}</div>
+                            <div className="wallet-row-info">
+                              <span className="wallet-row-name">{detail.info.name}</span>
+                              <span className="wallet-row-sub">EVM · {detail.info.rdns}</span>
                             </div>
-                            {isConnecting && <div className="connecting-spinner">⟳</div>}
+                            {isConnecting ? (
+                              <span className="wallet-spinner" aria-hidden="true" />
+                            ) : (
+                              <span className="wallet-row-arrow">→</span>
+                            )}
                           </button>
-                        );
-                      })}
-                    </div>
+                        </div>
+                      );
+                    })}
                   </>
-                ) : (
-                  <div className="wallet-no-providers">
-                    <p>No EVM wallet detected in your browser.</p>
-                    <a
-                      href="https://metamask.io/download/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="wallet-install-link"
-                    >
-                      Install MetaMask →
-                    </a>
-                  </div>
                 )}
 
-                <p className="wallet-section-label">
-                  {walletStore.detectedEVMProviders.length > 0
-                    ? 'Or scan with mobile wallet'
-                    : 'Connect via mobile wallet'}
-                </p>
-                <div className="wallet-providers">
-                  <button
-                    className="wallet-provider wallet-connect-cta"
-                    onClick={() => !connecting && handleWalletConnectConnect()}
-                    disabled={!!connecting || walletStore.evmConnecting}
-                  >
-                    <div className="provider-icon">⬡</div>
-                    <div className="provider-info">
-                      <div className="provider-name">WalletConnect</div>
-                      <div className="provider-description">
-                        Scan QR code · 400+ wallets supported
-                      </div>
-                    </div>
-                    {connecting === 'walletconnect' && <div className="connecting-spinner">⟳</div>}
-                  </button>
-                </div>
-
-                <p className="wallet-eip6963-badge">
-                  EIP-6963 · Open Wallet Standard · Auto-discovery
-                </p>
+                {/* No EVM wallet detected */}
+                {walletStore.detectedEVMProviders.length === 0 && (
+                  <p className="wallet-no-ext">
+                    No browser wallet detected.{' '}
+                    <a
+                      href={
+                        isMobile
+                          ? 'https://metamask.app.link/dapp/bitbasel.vercel.app'
+                          : 'https://metamask.io/download/'
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {isMobile ? 'Open MetaMask →' : 'Install MetaMask →'}
+                    </a>
+                  </p>
+                )}
               </>
             )}
-          </>
+          </div>
         )}
 
+        {/* Footer */}
         <div className="wallet-modal-footer">
-          <p className="text-small">By connecting, you agree to BitBasel&apos;s Terms of Service</p>
+          <p>By connecting, you agree to BitBasel&apos;s Terms of Service</p>
         </div>
       </div>
     </div>
