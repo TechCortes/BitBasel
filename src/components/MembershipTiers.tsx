@@ -57,7 +57,7 @@ export default function MembershipTiers({ showHeadline = true }: MembershipTiers
               <span className="membership-price-currency">$</span>
               <span className="membership-price-amount">49</span>
               <span className="membership-price-period">/mo</span>
-              <p className="membership-price-payment">USDC · ETH · BTC</p>
+              <p className="membership-price-payment">USDC · ETH · BTC · SOL</p>
             </div>
             <p className="membership-tier-pitch">
               List, sell, and earn royalties on Digital Collectibles and physical Fine Arts. Your
@@ -95,7 +95,7 @@ export default function MembershipTiers({ showHeadline = true }: MembershipTiers
               <span className="membership-price-currency">$</span>
               <span className="membership-price-amount">490</span>
               <span className="membership-price-period">/yr</span>
-              <p className="membership-price-payment">USDC · ETH · BTC</p>
+              <p className="membership-price-payment">USDC · ETH · BTC · SOL</p>
             </div>
             <p className="membership-tier-pitch">
               First access, private sales, and advisory services for collectors who treat Digital

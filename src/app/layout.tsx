@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     url: '/',
     title: 'BitBasel — Built for the Future of Art Culture',
     description:
-      'A global cultural technology platform for artists, collectors, founders, and cultural leaders. Creator $49/mo · Collector $490/yr. USDC · ETH · BTC.',
+      'A global cultural technology platform for artists, collectors, founders, and cultural leaders. Creator $49/mo · Collector $490/yr. USDC · ETH · BTC · SOL.',
     siteName: 'BitBasel',
   },
   twitter: {

@@ -105,7 +105,7 @@ const FAQS = [
   },
   {
     q: 'What payment methods are accepted?',
-    a: 'Memberships are payable in USDC, ETH, or BTC. Payment is processed through Luma. Your wallet is automatically verified once payment clears.',
+    a: 'Memberships are payable in USDC, ETH, BTC, or SOL. You can also pay by card — payment is processed through Luma. Your wallet is automatically verified once payment clears.',
   },
   {
     q: 'Can I switch between Creator and Collector?',
@@ -142,7 +142,7 @@ const JoinFlowSection = observer(function JoinFlowSection() {
     return (
       <div className="membership-join-prompt">
         <p className="membership-join-prompt-text">
-          Connect your wallet above to join. Accepted: USDC · ETH · BTC
+          Connect your wallet above to join. Accepted: USDC · ETH · BTC · SOL
         </p>
       </div>
     );
@@ -278,7 +278,7 @@ export default function MembershipPage() {
               </Link>
             </div>
             <p className="membership-final-note">
-              Creator billed monthly · Collector billed annually · USDC · ETH · BTC
+              Creator billed monthly · Collector billed annually · USDC · ETH · BTC · SOL
             </p>
           </div>
         </section>

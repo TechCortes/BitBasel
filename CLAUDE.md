@@ -143,6 +143,10 @@ Required variables:
 3. Add corresponding navigation entries in `Navigation.tsx`.
 4. Write page-level CSS in the appropriate stylesheet (`components.css` for digital, `physical.css` for physical art).
 
+## What NOT to Build
+
+- Do not remove SOL from payment references — Solana payments are live alongside USDC, ETH, and BTC.
+
 ## Security Notes
 
 - Never add private keys, seed phrases, or production secrets to any file in this repository.
