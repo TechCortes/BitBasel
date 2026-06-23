@@ -96,6 +96,33 @@ const HomePage: React.FC = observer(() => {
           </div>
         </section>
 
+        {/* Open Wallet Standard */}
+        <section className="standards-strip">
+          <div className="container">
+            <div className="standards-inner">
+              <span className="standards-eyebrow">Open Standards</span>
+              <a
+                href="https://openwallet.foundation"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="standards-logo-link"
+                aria-label="Open Wallet Foundation"
+              >
+                <img
+                  src="/logos/owf-white.svg"
+                  alt="Open Wallet Foundation"
+                  className="standards-logo"
+                />
+              </a>
+              <p className="standards-desc">
+                BitBasel implements the Open Wallet Foundation specification — enabling
+                interoperable, self-sovereign wallet connectivity across Bitcoin and EVM networks
+                without proprietary lock-in.
+              </p>
+            </div>
+          </div>
+        </section>
+
         {/* Authority Strip */}
         <section className="authority-strip">
           <div className="container">
