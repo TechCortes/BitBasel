@@ -137,6 +137,7 @@ const JoinFlowSection = observer(function JoinFlowSection() {
   const btcAddress = walletStore.walletInfo?.address ?? null;
   const evmAddress = walletStore.evmWalletInfo?.address ?? null;
   const walletAddress = btcAddress ?? evmAddress;
+  const evmProvider = walletStore.evmProvider;
 
   if (!walletAddress) {
     return (
@@ -150,7 +151,11 @@ const JoinFlowSection = observer(function JoinFlowSection() {
 
   return (
     <div className="membership-join-flow-wrapper">
-      <MembershipJoinFlow walletAddress={walletAddress} defaultTier={defaultTier} />
+      <MembershipJoinFlow
+        walletAddress={walletAddress}
+        evmProvider={evmProvider}
+        defaultTier={defaultTier}
+      />
     </div>
   );
 });

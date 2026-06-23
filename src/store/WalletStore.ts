@@ -946,6 +946,10 @@ export class WalletStore {
     return `${addr.slice(0, 6)}...${addr.slice(-4)}`;
   }
 
+  get evmProvider(): EIP1193Provider | null {
+    return this._evmProvider;
+  }
+
   get evmChainName() {
     const chainId = this.evmWalletInfo?.chainId;
     if (!chainId) return '';

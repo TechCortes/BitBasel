@@ -3617,6 +3617,24 @@
   margin: 1.5rem 0;
 }
 
+.bb-divider-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1.25rem 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.bb-divider-label::before,
+.bb-divider-label::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--color-border);
+}
+
 .bb-section-label {
   font-size: 0.65rem;
   font-weight: 600;

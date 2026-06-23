@@ -17,6 +17,7 @@
 import { useState, useCallback } from 'react';
 import { PRICING_TIERS, getBillingLabel } from '../../lib/tiers';
 import type { BitBaselTierKey, JoinRequest, JoinResponse } from '../../types/membership';
+import type { EIP1193Provider } from '../../types/wallet';
 
 type Step = 'select' | 'apply' | 'status';
 type JoinStatus = 'active' | 'pending_approval' | 'pending_payment' | 'error';
@@ -37,6 +38,7 @@ interface MembershipJoinFlowProps {
   /** Pre-select a tier (e.g. from ?tier=collector in the URL) */
   defaultTier?: BitBaselTierKey;
   walletAddress?: string;
+  evmProvider?: EIP1193Provider | null;
   onSuccess?: (tier: BitBaselTierKey) => void;
 }
 
@@ -53,6 +55,7 @@ const INITIAL_FORM: FormState = {
 export default function MembershipJoinFlow({
   defaultTier,
   walletAddress,
+  evmProvider,
   onSuccess,
 }: MembershipJoinFlowProps) {
   const [step, setStep] = useState<Step>(defaultTier ? 'apply' : 'select');
@@ -60,6 +63,7 @@ export default function MembershipJoinFlow({
   const [joinStatus, setJoinStatus] = useState<JoinStatus | null>(null);
   const [statusMsg, setStatusMsg] = useState('');
   const [loading, setLoading] = useState(false);
+  const [onChainLoading, setOnChainLoading] = useState(false);
   const [errors, setErrors] = useState<Partial<FormState>>({});
   const [form, setForm] = useState<FormState>(INITIAL_FORM);
 
@@ -146,6 +150,82 @@ export default function MembershipJoinFlow({
     }
   }
 
+  // ── On-chain payment (x402 / USDC on Base) ──────────────
+  async function handleOnChainPayment(e: React.FormEvent) {
+    e.preventDefault();
+    if (tierKey !== 'collector' || !validate() || !evmProvider || !walletAddress) return;
+
+    setOnChainLoading(true);
+    try {
+      const [{ wrapFetchWithPayment, x402Client }, { ExactEvmScheme }] = await Promise.all([
+        import('@x402/fetch'),
+        import('@x402/evm'),
+      ]);
+
+      const signer = {
+        address: walletAddress as `0x${string}`,
+        signTypedData: async (message: {
+          domain: Record<string, unknown>;
+          types: Record<string, unknown>;
+          primaryType: string;
+          message: Record<string, unknown>;
+        }) => {
+          return (await evmProvider.request({
+            method: 'eth_signTypedData_v4',
+            params: [walletAddress, JSON.stringify(message)],
+          })) as `0x${string}`;
+        },
+      };
+
+      const scheme = new ExactEvmScheme(signer);
+      const client = new x402Client().register('eip155:8453', scheme);
+      const payFetch = wrapFetchWithPayment(fetch, client);
+
+      const payload: JoinRequest = {
+        email: form.email.trim(),
+        name: form.name.trim(),
+        tier_key: 'collector',
+        wallet: walletAddress,
+        ...(form.collecting_focus && { collecting_focus: form.collecting_focus }),
+      };
+
+      const res = await payFetch('/api/x402/membership/collector', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !('status' in data)) {
+        setJoinStatus('error');
+        setStatusMsg('error' in data ? data.error : 'Payment failed.');
+        setStep('status');
+        return;
+      }
+
+      setJoinStatus(data.status as JoinStatus);
+      setStatusMsg(data.message);
+      setStep('status');
+      if (data.status === 'active') onSuccess?.('collector');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      if (
+        msg.toLowerCase().includes('user rejected') ||
+        msg.toLowerCase().includes('user denied')
+      ) {
+        setJoinStatus('error');
+        setStatusMsg('Payment was cancelled.');
+      } else {
+        setJoinStatus('error');
+        setStatusMsg('On-chain payment failed — check your wallet and try again.');
+      }
+      setStep('status');
+    } finally {
+      setOnChainLoading(false);
+    }
+  }
+
   // ── Render ──────────────────────────────────────────────────
   return (
     <div className="bb-join-flow">
@@ -213,7 +293,10 @@ export default function MembershipJoinFlow({
           <div className="bb-billing-pill">
             <span className="bb-billing-pill__price">{selectedTier.priceLabel}</span>
             <span className="bb-billing-pill__interval">
-              {getBillingLabel(tierKey)} · billed via Luma
+              {getBillingLabel(tierKey)}
+              {tierKey === 'collector' && evmProvider
+                ? ' · USDC on Base or via Luma'
+                : ' · billed via Luma'}
             </span>
           </div>
 
@@ -361,19 +444,47 @@ export default function MembershipJoinFlow({
             </>
           )}
 
-          <button type="submit" className="bb-btn bb-btn--primary" disabled={loading}>
-            {loading
-              ? 'Submitting…'
-              : selectedTier.requiresApproval
-                ? 'Submit application'
-                : `Join for ${selectedTier.priceLabel}`}
-          </button>
-
-          {tierKey === 'collector' && (
-            <p className="bb-field__hint" style={{ marginTop: '0.75rem', textAlign: 'center' }}>
-              You'll receive a secure payment link from Luma to complete your $490/year
-              subscription.
-            </p>
+          {tierKey === 'collector' && evmProvider ? (
+            <>
+              <button
+                type="button"
+                className="bb-btn bb-btn--primary"
+                disabled={onChainLoading || loading}
+                onClick={handleOnChainPayment}
+              >
+                {onChainLoading ? 'Confirm in wallet…' : 'Pay $490 with USDC on Base'}
+              </button>
+              <p className="bb-field__hint" style={{ marginTop: '0.5rem', textAlign: 'center' }}>
+                Signs a one-time authorization in your wallet. Instant activation on-chain.
+              </p>
+              <div className="bb-divider-label">or</div>
+              <button
+                type="submit"
+                className="bb-btn bb-btn--secondary"
+                disabled={loading || onChainLoading}
+              >
+                {loading ? 'Submitting…' : 'Request payment link by email'}
+              </button>
+              <p className="bb-field__hint" style={{ marginTop: '0.5rem', textAlign: 'center' }}>
+                Luma sends a Stripe payment link to your email.
+              </p>
+            </>
+          ) : (
+            <>
+              <button type="submit" className="bb-btn bb-btn--primary" disabled={loading}>
+                {loading
+                  ? 'Submitting…'
+                  : selectedTier.requiresApproval
+                    ? 'Submit application'
+                    : `Join for ${selectedTier.priceLabel}`}
+              </button>
+              {tierKey === 'collector' && (
+                <p className="bb-field__hint" style={{ marginTop: '0.75rem', textAlign: 'center' }}>
+                  You'll receive a secure payment link from Luma to complete your $490/year
+                  subscription.
+                </p>
+              )}
+            </>
           )}
         </form>
       )}

@@ -146,6 +146,37 @@ Required variables:
 ## What NOT to Build
 
 - Do not remove SOL from payment references — Solana payments are live alongside USDC, ETH, and BTC.
+- Do not add Creator tier to the x402 route — Creator applications require admin approval before payment is collected. Only the Collector tier uses x402.
+
+## x402 On-Chain Payment Integration
+
+BitBasel supports x402 (HTTP 402 Payment Required) for Collector membership ($490/yr, USDC on Base).
+
+**How it works:**
+1. Member connects an EVM wallet (MetaMask, WalletConnect)
+2. On the membership page, Collector tier shows "Pay with USDC on Base" button
+3. Client calls `POST /api/x402/membership/collector` via `@x402/fetch` `wrapFetchWithPayment`
+4. Server returns 402 with payment requirements (signed by `x402MembershipServer`)
+5. Client wallet signs an EIP-3009 `transferWithAuthorization` (off-chain, no gas)
+6. Server verifies via Coinbase facilitator at `https://facilitator.x402.org`
+7. Server registers member in Luma, then settles USDC on-chain via facilitator
+8. Member is active immediately — no Stripe email link required
+
+**Key files:**
+- `src/lib/x402-server.ts` — `x402HTTPResourceServer` singleton (server-only)
+- `src/app/api/x402/membership/collector/route.ts` — x402-gated membership route
+- `src/components/membership/MembershipJoinFlow.tsx` — `handleOnChainPayment` (lazy-loads `@x402/fetch` + `@x402/evm`)
+- `src/store/WalletStore.ts` — `get evmProvider()` exposes `_evmProvider` for signing
+
+**Required env var:**
+- `BITBASEL_PAYMENT_ADDRESS` — EVM address (on Base) that receives the $490 USDC payment
+
+**Packages:**
+- `@x402/core` — server: `x402HTTPResourceServer`, `x402ResourceServer`, `HTTPFacilitatorClient`
+- `@x402/evm` — client: `ExactEvmScheme` (EIP-3009 USDC signing)
+- `@x402/fetch` — client: `wrapFetchWithPayment`, `x402Client`
+
+`@x402/next` is NOT used — it requires Next.js 16+. The integration uses `@x402/core` directly.
 
 ## Security Notes
 
