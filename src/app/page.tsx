@@ -118,8 +118,6 @@ const HomePage: React.FC = observer(() => {
               <p className="standards-desc">
                 BitBasel supports the Open Wallet Standard — an open-source protocol for secure,
                 policy-gated, multi-chain wallet management across Bitcoin, EVM, Solana, and more.
-                Pioneered by MoonPay with contributions from PayPal, Ripple, and the Solana
-                Foundation.
               </p>
             </div>
           </div>
