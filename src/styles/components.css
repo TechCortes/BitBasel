@@ -2645,26 +2645,54 @@
     padding: 3rem 0;
   }
 
-  /* Make feature matrix horizontally scrollable on mobile */
+  /* Feature matrix — stacked 2-column layout on mobile (no horizontal scroll) */
   .membership-matrix {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow-x: visible;
   }
 
-  .membership-matrix-header,
+  .membership-matrix-header {
+    grid-template-columns: 1fr 1fr;
+    min-width: unset;
+  }
+
+  .membership-matrix-label-col {
+    display: none;
+  }
+
+  /* Creator tier header is now flush-left — remove its left border */
+  .membership-matrix-header .membership-matrix-tier-col:nth-child(2) {
+    border-left: none;
+  }
+
   .membership-matrix-row {
-    min-width: 520px;
-    grid-template-columns: 1.8fr 1fr 1fr;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-width: unset;
+  }
+
+  /* Feature name spans both columns as a label row */
+  .membership-matrix-feature-name {
+    grid-column: 1 / -1;
+    font-size: 0.78rem;
+    color: var(--color-text-secondary);
+    padding: 0.75rem 0.875rem 0.375rem;
+  }
+
+  /* Creator cell — left column, no left border */
+  .membership-matrix-row .membership-matrix-cell:not(.membership-matrix-cell-featured) {
+    border-left: none;
+    padding: 0.375rem 0.875rem 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  /* Collector cell — right column, retains left border as divider */
+  .membership-matrix-cell-featured {
+    padding: 0.375rem 0.875rem 0.75rem;
+    font-size: 0.82rem;
   }
 
   .membership-matrix-category-label {
-    min-width: 520px;
-  }
-
-  .membership-matrix-feature-name,
-  .membership-matrix-cell {
-    padding: 0.75rem 1rem;
-    font-size: 0.8rem;
+    min-width: unset;
   }
 
   .membership-final-cta {
