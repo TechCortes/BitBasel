@@ -151,11 +151,13 @@ const HomePage: React.FC = observer(() => {
         <section className="annual-section">
           <div className="container">
             <p className="annual-label">The BitBasel Annual · Miami</p>
-            <h2 className="annual-title">December, Every Year.</h2>
+            <h2 className="annual-title">Official BitBasel Day, December 4th.</h2>
             <p className="annual-description">
-              5,000 artists, collectors, founders, investors, and cultural leaders — five days at
-              the intersection of art, innovation, and capital. The premier gathering in the Western
-              Hemisphere for those shaping the future of culture.
+              The City of Miami Beach declared December 4th as the official BitBasel Day after our
+              impact and annual event bringing together +5,000 artists, collectors, founders,
+              investors, and cultural leaders for five days at the intersection of art, Web3, and
+              capital. Our gathering is part of art week in Miami which is also the premier event in
+              the Western Hemisphere for those shaping the future of culture.
             </p>
             <div className="annual-stats">
               <div className="annual-stat">
