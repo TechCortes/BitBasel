@@ -653,6 +653,18 @@
   color: var(--color-text-primary);
 }
 
+/* WalletConnect in-progress status hint */
+.wallet-wc-status {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 0.75rem 1rem;
+  border: 1px dashed rgba(59, 153, 252, 0.3);
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  margin-top: 0.5rem;
+}
+
 /* Mobile bottom-sheet adjustments */
 @media (max-width: 600px) {
   .wallet-modal-overlay {

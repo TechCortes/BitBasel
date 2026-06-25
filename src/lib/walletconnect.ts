@@ -1,8 +1,10 @@
 import type { EIP1193Provider } from '@/types/wallet';
 
-interface WCProvider extends EIP1193Provider {
+export interface WCProvider extends EIP1193Provider {
   connect: () => Promise<void>;
   disconnect: () => Promise<void>;
+  accounts: string[];
+  chainId: number;
 }
 
 let cachedProvider: WCProvider | null = null;
@@ -22,7 +24,7 @@ export async function getWalletConnectProvider(): Promise<WCProvider> {
   const provider = await EthereumProvider.init({
     projectId,
     chains: [1],
-    optionalChains: [137, 8453, 42161, 10],
+    optionalChains: [8453, 137, 42161, 10],
     showQrModal: true,
     metadata: {
       name: 'BitBasel',

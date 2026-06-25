@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
 import { useWalletStore } from '@/store/StoreProvider';
 import type { WalletProvider, EIP6963ProviderDetail } from '@/types/wallet';
@@ -142,11 +142,29 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
   const [connecting, setConnecting] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
     setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
   }, []);
+
+  // Focus the modal when it opens
+  useEffect(() => {
+    if (showModal && modalRef.current) {
+      modalRef.current.focus();
+    }
+  }, [showModal]);
+
+  // Close on Escape key
+  useEffect(() => {
+    if (!showModal) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [showModal, onClose]);
 
   const handleBitcoinConnect = async (id: WalletProvider) => {
     if (connecting) return;
@@ -155,9 +173,9 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
       await walletStore.connectWallet(id);
       onClose?.();
     } catch {
-      setTimeout(() => setConnecting(null), 1500);
+      // error is set in walletStore.error (auto-clears in 5s)
     } finally {
-      setTimeout(() => setConnecting(null), 600);
+      setConnecting(null);
     }
   };
 
@@ -169,9 +187,9 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
       await walletStore.connectEVMProvider(detail);
       onClose?.();
     } catch {
-      setTimeout(() => setConnecting(null), 1500);
+      // error is set in walletStore.evmError
     } finally {
-      setTimeout(() => setConnecting(null), 600);
+      setConnecting(null);
     }
   };
 
@@ -182,9 +200,9 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
       await walletStore.connectWalletConnect();
       onClose?.();
     } catch {
-      setTimeout(() => setConnecting(null), 1500);
+      // error is set in walletStore.evmError
     } finally {
-      setTimeout(() => setConnecting(null), 600);
+      setConnecting(null);
     }
   };
 
@@ -218,6 +236,9 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
                 src={walletStore.evmWalletInfo.providerIcon}
                 alt=""
                 className="evm-provider-icon-sm"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
               />
             )}
             <span className="wallet-dot" />
@@ -239,10 +260,18 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
   // ── Modal ──────────────────────────────────────────────────────────────────
   return (
     <div className="wallet-modal-overlay" onClick={onClose}>
-      <div className="wallet-modal" onClick={(e) => e.stopPropagation()}>
+      <div
+        ref={modalRef}
+        className="wallet-modal"
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="wallet-modal-title"
+        tabIndex={-1}
+      >
         {/* Header */}
         <div className="wallet-modal-header">
-          <span className="wallet-modal-title">Connect Wallet</span>
+          <span id="wallet-modal-title" className="wallet-modal-title">Connect Wallet</span>
           <button className="close-btn" onClick={onClose} aria-label="Close">
             ×
           </button>
@@ -402,6 +431,15 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
                   </button>
                 </div>
 
+                {/* WalletConnect in-progress hint */}
+                {connecting === 'walletconnect' && (
+                  <p className="wallet-wc-status">
+                    {isMobile
+                      ? 'Approve the connection in your wallet app.'
+                      : 'Scan the QR code with your wallet app.'}
+                  </p>
+                )}
+
                 {/* EIP-6963 auto-detected wallets */}
                 {walletStore.detectedEVMProviders.length > 0 && (
                   <>
@@ -451,18 +489,20 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
                 {/* No EVM wallet detected */}
                 {walletStore.detectedEVMProviders.length === 0 && (
                   <p className="wallet-no-ext">
-                    No browser wallet detected.{' '}
-                    <a
-                      href={
-                        isMobile
-                          ? 'https://metamask.app.link/dapp/bitbasel.vercel.app'
-                          : 'https://metamask.io/download/'
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {isMobile ? 'Open MetaMask →' : 'Install MetaMask →'}
-                    </a>
+                    {isMobile ? (
+                      'Use WalletConnect above to connect any mobile wallet.'
+                    ) : (
+                      <>
+                        No browser wallet detected.{' '}
+                        <a
+                          href="https://metamask.io/download/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Install MetaMask →
+                        </a>
+                      </>
+                    )}
                   </p>
                 )}
               </>

@@ -739,6 +739,9 @@ export class WalletStore {
         // Set pending reconnect — handled inside initEVMDiscovery when provider announces
         this._pendingEVMReconnectRdns = parsed.providerRdns;
         this._pendingEVMReconnectAddress = parsed.address;
+      } else if (parsed.providerType === 'walletconnect') {
+        // WC v2 stores its own session; attempt silent restore after provider init
+        this._attemptWCReconnect(parsed.address);
       }
     } catch {
       localStorage.removeItem('bitbasel_evm_wallet');
@@ -809,22 +812,44 @@ export class WalletStore {
     });
 
     try {
-      const { getWalletConnectProvider } = await import('@/lib/walletconnect');
+      const { getWalletConnectProvider, resetWalletConnectProvider } = await import(
+        '@/lib/walletconnect'
+      );
       const provider = await getWalletConnectProvider();
 
-      await provider.connect();
+      try {
+        await provider.connect();
+      } catch (connectError) {
+        // Reset cache so next attempt gets a fresh provider (handles user rejection, timeout)
+        resetWalletConnectProvider();
+        throw connectError;
+      }
 
-      const accounts = (await provider.request({ method: 'eth_accounts' })) as string[];
-      const chainResult = await provider.request({ method: 'eth_chainId' });
-      const chainId = parseInt(chainResult as string, 16);
+      // WC v2 EthereumProvider populates .accounts/.chainId after connect() resolves
+      const accounts =
+        provider.accounts.length > 0
+          ? provider.accounts
+          : ((await provider.request({ method: 'eth_accounts' })) as string[]);
 
       if (!accounts || accounts.length === 0) {
         throw new Error('No accounts returned from WalletConnect');
       }
 
+      const chainId =
+        provider.chainId > 0
+          ? provider.chainId
+          : parseInt((await provider.request({ method: 'eth_chainId' })) as string, 16);
+
       this._evmProvider = provider as unknown as EIP1193Provider;
       provider.on('accountsChanged', (accs: unknown) => {
         if ((accs as string[]).length === 0) this.disconnectEVM();
+      });
+      provider.on('chainChanged', (cid: unknown) => {
+        runInAction(() => {
+          if (this.evmWalletInfo) {
+            this.evmWalletInfo.chainId = parseInt(cid as string, 16);
+          }
+        });
       });
       provider.on('disconnect', () => this.disconnectEVM());
 
@@ -907,12 +932,69 @@ export class WalletStore {
     });
   }
 
+  // WalletConnect v2: silently restore a session from its internal storage
+  private async _attemptWCReconnect(expectedAddress: string) {
+    try {
+      const { getWalletConnectProvider, resetWalletConnectProvider } = await import(
+        '@/lib/walletconnect'
+      );
+      const provider = await getWalletConnectProvider();
+
+      // After EthereumProvider.init(), accounts are populated if a valid session exists
+      const accounts = provider.accounts;
+      if (
+        !accounts ||
+        accounts.length === 0 ||
+        accounts[0].toLowerCase() !== expectedAddress.toLowerCase()
+      ) {
+        resetWalletConnectProvider();
+        localStorage.removeItem('bitbasel_evm_wallet');
+        return;
+      }
+
+      const chainId = provider.chainId;
+      this._evmProvider = provider as unknown as EIP1193Provider;
+
+      provider.on('accountsChanged', (accs: unknown) => {
+        if ((accs as string[]).length === 0) this.disconnectEVM();
+      });
+      provider.on('chainChanged', (cid: unknown) => {
+        runInAction(() => {
+          if (this.evmWalletInfo) {
+            this.evmWalletInfo.chainId = parseInt(cid as string, 16);
+          }
+        });
+      });
+      provider.on('disconnect', () => this.disconnectEVM());
+
+      runInAction(() => {
+        this.evmWalletInfo = {
+          address: accounts[0],
+          chainId,
+          connected: true,
+          providerType: 'walletconnect',
+          providerName: 'WalletConnect',
+        };
+      });
+    } catch {
+      localStorage.removeItem('bitbasel_evm_wallet');
+    }
+  }
+
   private parseEVMError(error: unknown): string {
     if (error instanceof Error) {
-      if (error.message.includes('User rejected') || error.message.includes('user rejected')) {
-        return 'Connection was cancelled';
+      const msg = error.message.toLowerCase();
+      if (
+        msg.includes('user rejected') ||
+        msg.includes('user denied') ||
+        msg.includes('rejected request')
+      ) {
+        return 'Connection cancelled';
       }
-      if (error.message.includes('project ID')) {
+      if (msg.includes('connection request reset') || msg.includes('proposal expired')) {
+        return 'Connection request expired. Please try again.';
+      }
+      if (msg.includes('project id') || msg.includes('projectid')) {
         return 'WalletConnect not configured. Contact support.';
       }
       return error.message;
