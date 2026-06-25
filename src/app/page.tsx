@@ -74,9 +74,9 @@ const HomePage: React.FC = observer(() => {
           <div className="container" style={{ width: '100%' }}>
             <p className="hero-eyebrow">BitBasel — Private Membership</p>
             <h1 className="hero-title">
-              Where Art &amp; Culture
+              The Future of Digital and Fine Arts
               <br />
-              Meet Capital.
+              belongs to those who own it.
             </h1>
             <p className="hero-description">
               An invitation-only platform for artists, collectors, founders, and investors. Private
