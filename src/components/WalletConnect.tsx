@@ -271,7 +271,9 @@ const WalletConnect: React.FC<WalletConnectProps> = observer(({ onClose, showMod
       >
         {/* Header */}
         <div className="wallet-modal-header">
-          <span id="wallet-modal-title" className="wallet-modal-title">Connect Wallet</span>
+          <span id="wallet-modal-title" className="wallet-modal-title">
+            Connect Wallet
+          </span>
           <button className="close-btn" onClick={onClose} aria-label="Close">
             ×
           </button>
