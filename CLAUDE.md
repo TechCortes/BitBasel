@@ -158,7 +158,7 @@ BitBasel supports x402 (HTTP 402 Payment Required) for Collector membership ($49
 3. Client calls `POST /api/x402/membership/collector` via `@x402/fetch` `wrapFetchWithPayment`
 4. Server returns 402 with payment requirements (signed by `x402MembershipServer`)
 5. Client wallet signs an EIP-3009 `transferWithAuthorization` (off-chain, no gas)
-6. Server verifies via Coinbase facilitator at `https://facilitator.x402.org`
+6. Server verifies/settles via Coinbase's CDP-hosted facilitator at `https://api.cdp.coinbase.com/platform/v2/x402`
 7. Server registers member in Luma, then settles USDC on-chain via facilitator
 8. Member is active immediately — no Stripe email link required
 
@@ -168,13 +168,15 @@ BitBasel supports x402 (HTTP 402 Payment Required) for Collector membership ($49
 - `src/components/membership/MembershipJoinFlow.tsx` — `handleOnChainPayment` (lazy-loads `@x402/fetch` + `@x402/evm`)
 - `src/store/WalletStore.ts` — `get evmProvider()` exposes `_evmProvider` for signing
 
-**Required env var:**
+**Required env vars:**
 - `BITBASEL_PAYMENT_ADDRESS` — EVM address (on Base) that receives the $490 USDC payment
+- `CDP_API_KEY_ID` / `CDP_API_KEY_SECRET` — Coinbase Developer Platform API keys (portal.cdp.coinbase.com). Required for `verify`/`settle` on Base mainnet — the free public `x402.org/facilitator` reference facilitator only supports Base Sepolia testnet, not mainnet.
 
 **Packages:**
 - `@x402/core` — server: `x402HTTPResourceServer`, `x402ResourceServer`, `HTTPFacilitatorClient`
-- `@x402/evm` — client: `ExactEvmScheme` (EIP-3009 USDC signing)
+- `@x402/evm` — client + server: `ExactEvmScheme` (EIP-3009 USDC signing/verification)
 - `@x402/fetch` — client: `wrapFetchWithPayment`, `x402Client`
+- `@coinbase/x402` — Coinbase's hosted facilitator config (`facilitator` export), authenticated via CDP API keys
 
 `@x402/next` is NOT used — it requires Next.js 16+. The integration uses `@x402/core` directly.
 

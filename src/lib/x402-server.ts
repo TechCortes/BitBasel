@@ -2,9 +2,14 @@ import 'server-only';
 import { x402HTTPResourceServer, HTTPFacilitatorClient } from '@x402/core/http';
 import type { RoutesConfig } from '@x402/core/http';
 import { x402ResourceServer } from '@x402/core/server';
+import { ExactEvmScheme } from '@x402/evm/exact/server';
+import { facilitator as coinbaseFacilitatorConfig } from '@coinbase/x402';
 
-const facilitator = new HTTPFacilitatorClient({ url: 'https://facilitator.x402.org' });
-const coreServer = new x402ResourceServer(facilitator);
+// Base mainnet (eip155:8453) settlement requires Coinbase's CDP-hosted facilitator —
+// the public x402.org/facilitator reference facilitator only supports Base Sepolia.
+// Requires CDP_API_KEY_ID / CDP_API_KEY_SECRET env vars (portal.cdp.coinbase.com).
+const facilitator = new HTTPFacilitatorClient(coinbaseFacilitatorConfig);
+const coreServer = new x402ResourceServer(facilitator).register('eip155:*', new ExactEvmScheme());
 
 export const collectorRoutes: RoutesConfig = {
   'POST /api/x402/membership/collector': {
