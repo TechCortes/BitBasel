@@ -147,7 +147,7 @@ export default function OGImage() {
               fontFamily: 'sans-serif',
             }}
           >
-            bitbasel.vercel.app
+            app.bitbasel.miami
           </span>
         </div>
       </div>

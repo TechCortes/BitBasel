@@ -60,7 +60,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL(process.env.BASE_URL || 'https://bitbasel.vercel.app'),
+  metadataBase: new URL(process.env.BASE_URL || 'https://app.bitbasel.miami'),
   alternates: {
     canonical: '/',
   },

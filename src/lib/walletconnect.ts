@@ -29,8 +29,8 @@ export async function getWalletConnectProvider(): Promise<WCProvider> {
     metadata: {
       name: 'BitBasel',
       description: 'Private membership for art and Web3',
-      url: typeof window !== 'undefined' ? window.location.origin : 'https://bitbasel.vercel.app',
-      icons: ['https://bitbasel.vercel.app/icon.svg'],
+      url: typeof window !== 'undefined' ? window.location.origin : 'https://app.bitbasel.miami',
+      icons: ['https://app.bitbasel.miami/icon.svg'],
     },
   });
 
