@@ -89,7 +89,7 @@ export default function DemoPitchFlow() {
 
   return (
     <div className="demo-flow">
-      <div className="demo-badge">Investor Demo — simulated payment, no funds move</div>
+      <div className="demo-badge">Investors Demo</div>
 
       <div className="container">
         {step !== 'welcome' && <DemoStepper current={step} />}
