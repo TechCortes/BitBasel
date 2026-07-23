@@ -1,0 +1,151 @@
+/* ─── Investor Demo Flow (demo-*) ────────────────────────────────────────── */
+
+.demo-flow {
+  min-height: 80vh;
+  padding: 2rem 0 6rem;
+}
+
+.demo-badge {
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--bb-amber);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.75rem 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.demo-stepper {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 3rem;
+  flex-wrap: wrap;
+}
+
+.demo-stepper__item {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.demo-stepper__item--active {
+  color: var(--color-text-primary);
+}
+
+.demo-stepper__item--done {
+  color: var(--color-text-secondary);
+}
+
+.demo-step {
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.demo-step .btn-primary,
+.demo-step .btn-outline {
+  margin-top: 2rem;
+}
+
+.demo-hero {
+  padding: 4rem 0;
+}
+
+.demo-hero-lead {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  max-width: 480px;
+  margin: 1.5rem auto 0;
+  line-height: 1.7;
+}
+
+.demo-step-sub {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin: 0.75rem auto 2rem;
+  max-width: 480px;
+}
+
+.demo-discover-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.demo-discover-card {
+  border: 1px solid var(--color-border);
+}
+
+.demo-discover-card__image {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.demo-discover-card__meta {
+  padding: 0.875rem 1rem 1.125rem;
+}
+
+.demo-discover-card__title {
+  font-size: 0.85rem;
+  color: var(--color-text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.demo-discover-card__sub {
+  font-size: 0.72rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.demo-discover-card__price {
+  font-size: 0.78rem;
+  color: var(--color-text-secondary);
+}
+
+.demo-wallet-box {
+  margin: 2rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.demo-payment-box {
+  max-width: 360px;
+  margin: 2rem auto 0;
+  text-align: left;
+}
+
+.demo-payment-stage {
+  font-size: 0.82rem;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.demo-payment-stage--active {
+  color: var(--color-text-primary);
+}
+
+.demo-payment-stage--done {
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 640px) {
+  .demo-discover-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .demo-stepper {
+    gap: 1rem;
+  }
+}
