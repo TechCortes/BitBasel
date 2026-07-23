@@ -52,6 +52,14 @@ export const Navigation: React.FC = observer(() => {
               >
                 About
               </a>
+              <a
+                href="https://www.artcube.xyz/"
+                className="nav-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ArtCube OS
+              </a>
 
               <div className="wallet-section">
                 {walletStore.isConnected || walletStore.isEVMConnected ? (
@@ -99,6 +107,14 @@ export const Navigation: React.FC = observer(() => {
                 rel="noopener noreferrer"
               >
                 About
+              </a>
+              <a
+                href="https://www.artcube.xyz/"
+                className="nav-link mobile-link"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ArtCube OS
               </a>
 
               <div className="mobile-wallet-section">
