@@ -1,11 +1,14 @@
 /* ─── Investor Demo Flow (demo-*) ────────────────────────────────────────── */
 
 .demo-flow {
+  position: relative;
   min-height: 80vh;
   padding: 2rem 0 6rem;
+  overflow: hidden;
 }
 
 .demo-badge {
+  position: relative;
   text-align: center;
   font-size: 0.68rem;
   font-weight: 600;
@@ -17,33 +20,8 @@
   margin-bottom: 2.5rem;
 }
 
-.demo-stepper {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  list-style: none;
-  padding: 0;
-  margin: 0 0 3rem;
-  flex-wrap: wrap;
-}
-
-.demo-stepper__item {
-  font-size: 0.68rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--color-text-muted);
-}
-
-.demo-stepper__item--active {
-  color: var(--color-text-primary);
-}
-
-.demo-stepper__item--done {
-  color: var(--color-text-secondary);
-}
-
 .demo-step {
+  position: relative;
   max-width: 640px;
   margin: 0 auto;
   text-align: center;
@@ -54,8 +32,121 @@
   margin-top: 2rem;
 }
 
+.demo-step-sub {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin: 0.75rem auto 2rem;
+  max-width: 480px;
+}
+
+/* ─── Progress rail ─────────────────────────────────────────── */
+
+.demo-rail {
+  max-width: 520px;
+  margin: 0 auto 3rem;
+}
+
+.demo-rail__track {
+  position: relative;
+  height: 1px;
+  background: var(--color-border);
+  margin-bottom: 1rem;
+}
+
+.demo-rail__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 1px;
+  background: var(--bb-teal);
+}
+
+.demo-rail__items {
+  display: flex;
+  justify-content: space-between;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.demo-rail__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.demo-rail__dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-strong);
+  color: var(--color-background);
+  background: var(--color-background);
+  transition:
+    border-color 0.3s ease,
+    background 0.3s ease;
+}
+
+.demo-rail__item--active .demo-rail__dot {
+  border-color: var(--bb-teal);
+  box-shadow: 0 0 0 4px rgba(26, 188, 156, 0.15);
+}
+
+.demo-rail__item--done .demo-rail__dot {
+  border-color: var(--bb-teal);
+  background: var(--bb-teal);
+  color: #000000;
+}
+
+.demo-rail__label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.demo-rail__item--active .demo-rail__label {
+  color: var(--color-text-primary);
+}
+
+.demo-rail__item--done .demo-rail__label {
+  color: var(--color-text-secondary);
+}
+
+/* ─── Welcome / hero ─────────────────────────────────────────── */
+
 .demo-hero {
   padding: 4rem 0;
+}
+
+.demo-hero-aurora {
+  position: absolute;
+  inset: -20% -10%;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(26, 188, 156, 0.12), transparent 55%),
+    radial-gradient(circle at 70% 65%, rgba(155, 89, 182, 0.1), transparent 55%);
+  animation: demo-aurora-drift 16s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes demo-aurora-drift {
+  0% {
+    transform: translate(-2%, -1%) scale(1);
+  }
+  100% {
+    transform: translate(2%, 2%) scale(1.08);
+  }
+}
+
+.demo-hero-line {
+  display: inline-block;
 }
 
 .demo-hero-lead {
@@ -66,52 +157,23 @@
   line-height: 1.7;
 }
 
-.demo-step-sub {
-  font-size: 0.9rem;
-  color: var(--color-text-secondary);
-  margin: 0.75rem auto 2rem;
-  max-width: 480px;
+/* ─── Membership tier glow ───────────────────────────────────── */
+
+.demo-tier-card--glow {
+  animation: demo-tier-glow 3.2s ease-in-out infinite;
 }
 
-.demo-discover-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.25rem;
-  margin-bottom: 1rem;
-  text-align: left;
+@keyframes demo-tier-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(26, 188, 156, 0);
+  }
+  50% {
+    box-shadow: 0 0 24px rgba(26, 188, 156, 0.12);
+  }
 }
 
-.demo-discover-card {
-  border: 1px solid var(--color-border);
-}
-
-.demo-discover-card__image {
-  width: 100%;
-  aspect-ratio: 1;
-  object-fit: cover;
-  display: block;
-}
-
-.demo-discover-card__meta {
-  padding: 0.875rem 1rem 1.125rem;
-}
-
-.demo-discover-card__title {
-  font-size: 0.85rem;
-  color: var(--color-text-primary);
-  margin-bottom: 0.25rem;
-}
-
-.demo-discover-card__sub {
-  font-size: 0.72rem;
-  color: var(--color-text-muted);
-  margin-bottom: 0.5rem;
-}
-
-.demo-discover-card__price {
-  font-size: 0.78rem;
-  color: var(--color-text-secondary);
-}
+/* ─── Wallet ─────────────────────────────────────────────────── */
 
 .demo-wallet-box {
   margin: 2rem 0;
@@ -119,33 +181,203 @@
   justify-content: center;
 }
 
-.demo-payment-box {
+.demo-connect-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.demo-wallet-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.demo-wallet-dot {
+  position: relative;
+}
+
+.demo-wallet-dot::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: var(--bb-teal);
+  opacity: 0.35;
+  animation: demo-dot-pulse 1.8s ease-out infinite;
+}
+
+@keyframes demo-dot-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.35;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.demo-spinner {
+  display: inline-block;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid rgba(0, 0, 0, 0.25);
+  border-top-color: #000000;
+  animation: demo-spin 0.7s linear infinite;
+}
+
+.demo-spinner--small {
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--color-border-strong);
+  border-top-color: var(--color-text-primary);
+}
+
+@keyframes demo-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ─── Payment tracker ────────────────────────────────────────── */
+
+.demo-tracker {
   max-width: 360px;
   margin: 2rem auto 0;
   text-align: left;
 }
 
-.demo-payment-stage {
-  font-size: 0.82rem;
-  padding: 0.625rem 0;
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-text-muted);
+.demo-tracker__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
 }
 
-.demo-payment-stage--active {
+.demo-tracker__rail {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.demo-tracker__node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border-strong);
+  color: #000000;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.demo-tracker__row--done .demo-tracker__node {
+  background: var(--bb-teal);
+  border-color: var(--bb-teal);
+}
+
+.demo-tracker__row--active .demo-tracker__node {
+  border-color: var(--color-text-primary);
+}
+
+.demo-tracker__connector {
+  position: relative;
+  width: 1px;
+  flex: 1;
+  min-height: 1.75rem;
+  background: var(--color-border);
+  overflow: hidden;
+}
+
+.demo-tracker__connector-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--bb-teal);
+  transform-origin: top;
+  transform: scaleY(0);
+}
+
+.demo-tracker__label {
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
+  padding-bottom: 1.5rem;
+}
+
+.demo-tracker__row--active .demo-tracker__label {
   color: var(--color-text-primary);
 }
 
-.demo-payment-stage--done {
+.demo-tracker__row--done .demo-tracker__label {
   color: var(--color-text-secondary);
 }
 
-@media (max-width: 640px) {
-  .demo-discover-grid {
-    grid-template-columns: 1fr;
-  }
+/* ─── Success ────────────────────────────────────────────────── */
 
-  .demo-stepper {
-    gap: 1rem;
+.demo-success-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 1px solid var(--bb-teal);
+  color: var(--bb-teal);
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.demo-success-icon::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  border: 1px solid rgba(26, 188, 156, 0.3);
+  animation: demo-success-halo 2.4s ease-out infinite;
+}
+
+@keyframes demo-success-halo {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+.demo-burst {
+  position: absolute;
+  top: 2.5rem;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.demo-burst__particle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+}
+
+.demo-burst__particle--teal {
+  background: var(--bb-teal);
+}
+
+.demo-burst__particle--amber {
+  background: var(--bb-amber);
+}
+
+@media (max-width: 640px) {
+  .demo-rail__label {
+    display: none;
   }
 }
